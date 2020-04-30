@@ -8,12 +8,14 @@
 
 #define MAX_SIZE 97
 #define ESTADO_SIZE 2
+#define NASC_SIZE 10
 #define GETLINE_RECOMMENDED_SIZE 120
 #define SIZEOF_REG 128
 
 typedef struct reg{
-	int sizeCidadeMae, sizeCidadeBb, idNascimento, idadeMae, dataNasc, sexoBebe;
-	char cidadeMae[MAX_SIZE], cidadeBebe[MAX_SIZE], estadoMae[ESTADO_SIZE], estadoBebe[ESTADO_SIZE];
+    char sexoBebe;
+	int sizeCidadeMae, sizeCidadeBebe, idNascimento, idadeMae;
+	char cidadeMae[MAX_SIZE], cidadeBebe[MAX_SIZE], estadoMae[ESTADO_SIZE], estadoBebe[ESTADO_SIZE], dataNascimento[NASC_SIZE];
 }REG;
 
 typedef struct head{
