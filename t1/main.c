@@ -1,3 +1,8 @@
+/***************************************
+Autores : 10786121 Luiza Rubio 
+
+****************************************/
+
 #include"crud.h"
 
 int csv2bin(char *csv, char *bin){
