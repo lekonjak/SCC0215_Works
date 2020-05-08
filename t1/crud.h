@@ -4,7 +4,6 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<string.h>
 
 #define MAX_SIZE 97
 #define ESTADO_SIZE 2
@@ -31,6 +30,8 @@ int bwrite_head(FILE *fp, HEAD *head);
 int fread_reg(FILE *fp, REG *reg);
 	// reading register from binary
 int bread_reg(FILE *fp, REG *reg);
+	// reading head from binary
+int bread_head(FILE *fp, HEAD *head);
 	// miscellanea
 int print_reg(REG *reg);
 

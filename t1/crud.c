@@ -59,6 +59,10 @@ int fread_reg(FILE *fp, REG *reg ){
 int bread_reg(FILE *fp, REG *reg ){
     return 0;
 }
+    // reading head from binary
+int bread_head(FILE *fp, HEAD *head){
+    return 0;
+}
 	// miscellanea
 int print_reg(REG *reg){
     return 0;
