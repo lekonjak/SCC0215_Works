@@ -46,17 +46,62 @@ int bwrite_head(FILE *fp, HEAD *head){
 	// reading register from file
 int fread_reg(FILE *fp, REG *reg ){
         //  easiest way - getline + strsep
-    char *line = NULL;
+    int i = 0;
+    char *line = NULL, *aux = NULL;
     size_t size = GETLINE_RECOMMENDED_SIZE;
         //  reading entire line
     getline(&line, &size, fp);
         //  extracting tokens with strsep
-    
+    while((aux = strsep(&line, ",")) != NULL){
+        if(!strcmp(aux, "")){
+            if(i == 0)
+                reg->sizeCidadeMae = strlen(aux);
+            else if(i == 1){
+                reg->sizeCidadeBebe = strlen(aux);
+            }else if(i == 3){
+                reg->idadeMae = -1;
+            }else if(i == 4){
+                strcpy(reg->dataNascimento, "\0$$$$$$$$$");
+            }else if(i == 5){
+                reg->sexoBebe = '\0';
+            }else if(i == 6){
+                strcpy(reg->estadoMae, "\0$");
+            }else{
+                // i == 7
+                strcpy(reg->estadoBebe, "\0$");
+            }
+
+        }else{
+
+
+            if(i == 0){
+                reg->sizeCidadeMae = strlen(aux);
+                strcpy(reg->cidadeMae, aux);
+            }else if(i == 1){
+                reg->sizeCidadeBebe = strlen(aux);
+                strcpy(reg->cidadeBebe, aux);
+            }else if(i == 2){
+                reg->idNascimento = atoi(aux);
+            }else if(i == 3){
+                reg->idadeMae = atoi(aux);
+            }else if(i == 4){
+                strcpy(reg->dataNascimento, aux);
+            }else if(i == 5){
+                reg->sexoBebe = aux[0];
+            }else if(i == 6){
+                strcpy(reg->estadoMae, aux);
+            }else{
+                // i == 7
+                strcpy(reg->estadoBebe, aux);
+            }
+        }
+        i++;
+    }
     free(line);
     return 0;
 }
 	// reading register from binary
-int bread_reg(FILE *fp, REG *reg ){
+int bread_reg(FILE *fp, REG *reg){
     return 0;
 }
     // reading head from binary
@@ -67,9 +112,3 @@ int bread_head(FILE *fp, HEAD *head){
 int print_reg(REG *reg){
     return 0;
 }
-
-int erase_reg(REG *reg){
-    return 0;
-}
-
-
