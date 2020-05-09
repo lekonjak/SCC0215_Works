@@ -35,6 +35,5 @@ int bread_head(FILE *fp, HEAD *head);
 	// miscellanea
 int print_reg(REG *reg);
 
-int erase_reg(REG *reg);
 
 #endif
