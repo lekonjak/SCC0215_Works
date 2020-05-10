@@ -194,7 +194,7 @@ int print_reg(REG *reg){
 
         //checks if there's a valid answer and prints the variable//
         if(reg->cidadeBebe[0] != '\0'){
-            printf("Nasceu em: %s, ", reg->cidadeBebe);
+            printf("Nasceu em: %s", reg->cidadeBebe);
         }
         else{
             printf("Nasceu em: -");
@@ -204,7 +204,7 @@ int print_reg(REG *reg){
             printf("/%s, em ", reg->estadoBebe);
         }
         else{
-            printf("/-, ");
+            printf("/-, em ");
         }
         if(reg->dataNascimento[0] != '$'){
             printf("%s, ", reg->dataNascimento);
