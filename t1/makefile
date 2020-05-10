@@ -1,5 +1,8 @@
 all:	compile
 
+clean:
+	rm *.o
+
 run:
 	./t1
 
