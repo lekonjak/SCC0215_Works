@@ -146,7 +146,7 @@ int bread_head(FILE *fp, HEAD *head){
     return 0;
 }
 
-int print_reg(REG *reg, int numeroRegistrosInseridos, FILE *fileP){
+int print_reg(REG *reg, int numeroRegistrosInseridos){
     
         //goes through every reg printing them//
     for(int i=0; i < numeroRegistrosInseridos; i++){
