@@ -129,6 +129,8 @@ int bread_reg(FILE *fp, REG *reg ){
 
     return 0;
 }
+
+
     // reading head from binary
 int bread_head(FILE *fp, HEAD *head){
          // reading status byte
@@ -152,7 +154,7 @@ int print_reg(REG *reg, HEAD *head){
     if(fileP == NULL) printf("Falha no processamento do arquivo");
 
         //reads header
-    bread_head(fileP, &head);
+    bread_head(fileP, head);
 
         //checks if there are no regs//
     if(head->numeroRegistrosInseridos){
@@ -162,19 +164,19 @@ int print_reg(REG *reg, HEAD *head){
     
         //goes through every reg printing them//
     for(int i=0; i < head->numeroRegistrosInseridos; i++){
-        bread_reg(fileP, &reg);
+        bread_reg(fileP, reg);
         //checks if it wasn't removed//
         if(reg->cidadeMae >= 0 ){
 
         //checks if there's a valid answer and prints the variable//
-            if(reg->cidadeBebe != '\0'){
+            if(reg->cidadeBebe[0] != '\0'){
                 printf("Nasceu em: %s, ", reg->cidadeBebe);
             }
             else{
                 printf("Nasceu em: -, ");
             }
 
-            if(reg->estadoBebe != '\0$'){
+            if(reg->estadoBebe[0] != '\0'){
                 printf("/%s, ", reg->estadoBebe);
             }
              else{
@@ -197,13 +199,14 @@ int print_reg(REG *reg, HEAD *head){
                 printf("um bebe de sexo IGNORADO.\n");
             }
            
+        }
     }
 
     fclose(bin);
 
     return 0;
 
-//erro//
+        //erro//
     printf("Falha no processamento do arquivo");
 }
 
