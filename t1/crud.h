@@ -33,7 +33,7 @@ int bread_reg(FILE *fp, REG *reg);
 	// reading head from binary
 int bread_head(FILE *fp, HEAD *head);
 	// miscellanea
-int print_reg(REG *reg, int numeroRegistrosInseridos, FILE *fp);
+int print_reg(REG *reg);
     // our feof implementation
 int mfeof(FILE *fp);
 
