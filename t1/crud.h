@@ -34,6 +34,7 @@ int bread_reg(FILE *fp, REG *reg);
 int bread_head(FILE *fp, HEAD *head);
 	// miscellanea
 int print_reg(REG *reg);
-
+    // our feof implementation
+int mfeof(FILE *fp);
 
 #endif
