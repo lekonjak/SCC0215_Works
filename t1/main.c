@@ -28,11 +28,27 @@ int csv2bin(char *csv, char *bin){
 }
 
 int bin2screen(char *bin){
-	//to do
-	FILE *fp = fopen(bin, "rb");
-    
+
+	FILE *fp=NULL;
+	fp = fopen(bin, "rb");
+            //in case it didnt open//
+    if(fp == NULL){
+        printf("Falha no processamento do arquivo");
+        return 0; 
+    }
+
     HEAD head = {0};
+    REG reg = {0};
+    //reads header//
     bread_head(fp, &head);
+
+    //checks if there are no regs//
+    if(head.numeroRegistrosInseridos == 0){
+        printf("Registro inexistente");
+    }
+    else{
+        print_reg(&reg, head.numeroRegistrosInseridos, fp);
+    }
 
 	fclose(fp);
 	return 0;
@@ -57,7 +73,7 @@ int main(void){
 		csv2bin(in, out);
         binarioNaTela(out);
 	}else if( op == 2 ){
-            // reads binary file and outputs to stdout
+        // reads binary file and outputs to stdout
 		bin2screen(strtok(NULL, " \n"));	
 	}
         // getline memory free

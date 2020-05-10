@@ -146,24 +146,10 @@ int bread_head(FILE *fp, HEAD *head){
     return 0;
 }
 
-int print_reg(REG *reg, HEAD *head){
-    FILE *fileP=NULL;
-    *fileP = fopen(bin,"r+b");
-
-        //erro//
-    if(fileP == NULL) printf("Falha no processamento do arquivo");
-
-        //reads header
-    bread_head(fileP, head);
-
-        //checks if there are no regs//
-    if(head->numeroRegistrosInseridos){
-      printf("Registro inexistente");
-      return 0;  
-    } 
+int print_reg(REG *reg, int numeroRegistrosInseridos, FILE *fileP){
     
         //goes through every reg printing them//
-    for(int i=0; i < head->numeroRegistrosInseridos; i++){
+    for(int i=0; i < numeroRegistrosInseridos; i++){
         bread_reg(fileP, reg);
         //checks if it wasn't removed//
         if(reg->cidadeMae >= 0 ){
@@ -201,8 +187,6 @@ int print_reg(REG *reg, HEAD *head){
            
         }
     }
-
-    fclose(bin);
 
     return 0;
 
