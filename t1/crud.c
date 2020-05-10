@@ -146,52 +146,45 @@ int bread_head(FILE *fp, HEAD *head){
     return 0;
 }
 
-int print_reg(REG *reg, int numeroRegistrosInseridos, FILE *fp){
+int print_reg(REG *reg){
     
         //goes through every reg printing them//
-    for(int i=0; i < numeroRegistrosInseridos; i++){
-        bread_reg(fp, reg);
         //checks if it wasn't removed//
-        if(reg->cidadeMae >= 0 ){
+    if(reg->cidadeMae >= 0 ){
 
         //checks if there's a valid answer and prints the variable//
-            if(reg->cidadeBebe[0] != '\0'){
-                printf("Nasceu em: %s, ", reg->cidadeBebe);
-            }
-            else{
-                printf("Nasceu em: -, ");
-            }
-
-            if(reg->estadoBebe[0] != '\0'){
-                printf("/%s, ", reg->estadoBebe);
-            }
-             else{
-                printf("/-, ");
-            }
-            if(reg->dataNascimento[0] != '$'){
-                printf("%s, ", reg->dataNascimento);
-            }
-            else{
-                printf("-, ");
-            }
-
-            if(reg->sexoBebe == 1){
-                printf("um bebe de sexo MASCULINO.\n");
-            }
-            if(reg->sexoBebe == 2){
-                printf("um bebe de sexo FEMININO.\n");
-            }
-            if(reg->sexoBebe == 0){
-                printf("um bebe de sexo IGNORADO.\n");
-            }
-           
+        if(reg->cidadeBebe[0] != '\0'){
+            printf("Nasceu em: %s, ", reg->cidadeBebe);
         }
+        else{
+            printf("Nasceu em: -, ");
+        }
+
+        if(reg->estadoBebe[0] != '\0'){
+            printf("/%s, ", reg->estadoBebe);
+        }
+        else{
+            printf("/-, ");
+        }
+        if(reg->dataNascimento[0] != '$'){
+            printf("%s, ", reg->dataNascimento);
+        }
+        else{
+            printf("-, ");
+        }
+
+        if(reg->sexoBebe == 1){
+            printf("um bebe de sexo MASCULINO.\n");
+        }else if(reg->sexoBebe == 2){
+            printf("um bebe de sexo FEMININO.\n");
+        }else{ //(reg->sexoBebe == 0)
+            printf("um bebe de sexo IGNORADO.\n");
+        }
+
+        
     }
 
     return 0;
-
-        //erro//
-    printf("Falha no processamento do arquivo");
 }
 
 int mfeof(FILE *fp) {
