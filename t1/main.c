@@ -10,10 +10,16 @@ int csv2bin(char *csv, char *bin){
     REG reg = {0};
         // writting header into binary file
     bwrite_head(output, &head);
+        // csv first row has only column names
+        // ... so... we're going to jump it.
+    fscanf(input, "%*[^\n]");
         // writting new registers until EOF
     while(!mfeof(input)){
             // read input line
         fread_reg(input,&reg);
+#ifdef DEBUG
+        print_reg(&reg);
+#endif
             // counting regs 
         head.numeroRegistrosInseridos++;
             // writting to binary file
