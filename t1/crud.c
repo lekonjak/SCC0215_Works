@@ -50,16 +50,21 @@ int bwrite_head(FILE *fp, HEAD *head){
 int fread_reg(FILE *fp, REG *reg ){
         //  easiest way - getline + strsep
     int i = 0;
-    char *line = NULL, *aux = NULL;
+    char *line = NULL, *lineaux = NULL, *aux = NULL;
     size_t size = GETLINE_RECOMMENDED_SIZE;
         //  reading entire line
-    if(getline(&line, &size, fp)<0){
-        if (aux != NULL) free(aux);
+    if(getline(&line, &size, fp) == -1 ){
+        if (line != NULL) free(line);
         return 0;
     }
-        
+    line[strlen(line)-1] = '\0';
+        // strsep overwrites target, so lets use a reference
+    lineaux = line;    
         //  extracting tokens with strsep
-    while((aux = strsep(&line, ",")) != NULL){
+    while((aux = strsep(&lineaux, ",")) != NULL){
+    #ifdef DEBUG
+        printf(" read '%s' of size %ld \n", aux, strlen(aux));
+    #endif
         if(!strcmp(aux, "")){
             if(i == 0)
                 reg->sizeCidadeMae = strlen(aux);
@@ -181,9 +186,8 @@ int print_reg(REG *reg){
             printf("um bebe de sexo IGNORADO.\n");
         }
 
-        
+       return 1; 
     }
-
     return 0;
 }
 
@@ -195,7 +199,7 @@ int mfeof(FILE *fp) {
 
         fseek(fp, cur, SEEK_SET);
                     
-        if(ftell(fp) < max)
+        if(cur < max)
             return 0;
         return 1;
 }
