@@ -11,12 +11,14 @@ int csv2bin(char *csv, char *bin){
         // writting header into binary file
     bwrite_head(output, &head);
         // writting new registers until EOF
-   // while(fread_reg(input,&reg)){
-   //         // counting regs 
-   //     head.numeroRegistrosInseridos++;
-   //         // writting to binary file
-   //     bwrite_reg(output, &reg);
-   // }
+    while(!mfeof(input)){
+            // read input line
+        fread_reg(input,&reg);
+            // counting regs 
+        head.numeroRegistrosInseridos++;
+            // writting to binary file
+        bwrite_reg(output, &reg);
+    }
         // updating status byte
     head.status = 1; 
         // writting header again, with recent values and 
@@ -30,8 +32,9 @@ int csv2bin(char *csv, char *bin){
 int bin2screen(char *bin){
 
 	FILE *fp=NULL;
+    int i = 0;
 	fp = fopen(bin, "rb");
-            //in case it didnt open//
+        //in case it didnt open//
     if(fp == NULL){
         printf("Falha no processamento do arquivo");
         return 0; 
@@ -39,16 +42,20 @@ int bin2screen(char *bin){
 
     HEAD head = {0};
     REG reg = {0};
-    //reads header//
+        //reads header//
     bread_head(fp, &head);
 
     //checks if there are no regs//
-    if(head.numeroRegistrosInseridos == 0){
+    if(head.numeroRegistrosInseridos == 0)
         printf("Registro inexistente");
-    }
-    else{
-        print_reg(&reg, head.numeroRegistrosInseridos, fp);
-    }
+   
+        //goes through every reg printing them
+    while(i++ < head.numeroRegistrosInseridos){
+        // read registry on binary
+            bread_reg(fp, &reg);
+        // print its values
+            print_reg(&reg);
+    }   
 
 	fclose(fp);
 	return 0;
