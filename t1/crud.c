@@ -104,17 +104,107 @@ int fread_reg(FILE *fp, REG *reg ){
     free(line);
     return 0;
 }
-	// reading register from binary
-int bread_reg(FILE *fp, REG *reg){
+    // reading register from binary
+int bread_reg(FILE *fp, REG *reg ){
+    //stores position of pointer//
+    int position= ftell(fp);
+     // reads CidadeMae/Bebe string sizes
+    fread(&reg->sizeCidadeMae, sizeof(int), 1 ,fp);
+    fread(&reg->sizeCidadeBebe, sizeof(int), 1 ,fp);
+
+    fread(reg->cidadeMae, sizeof(char), reg->sizeCidadeMae, fp); 
+    fread(reg->cidadeBebe, sizeof(char), reg->sizeCidadeBebe, fp);
+//sets pointer to the begining of the rest of the variables
+    fseek(fp, 0,SEEK_SET);
+    position=position+105;
+    fseek(fp, position,SEEK_SET);
+    
+        // writting remaining registry components 
+    fread(&reg->idNascimento, sizeof(char), 10, fp);
+    fread(&reg->idadeMae, sizeof(int), 1, fp);
+    fread(reg->dataNascimento, sizeof(char), NASC_SIZE, fp);
+    fread(&reg->sexoBebe, sizeof(char), 1, fp);
+    fread(reg->estadoMae, sizeof(char), ESTADO_SIZE, fp);
+    fread(reg->estadoBebe, sizeof(char), ESTADO_SIZE, fp);
+
     return 0;
 }
     // reading head from binary
 int bread_head(FILE *fp, HEAD *head){
+         // reading status byte
+    fread(&head->status, sizeof(char), 1, fp);
+    // reading other variables
+    fread(&head->RRNproxRegistro, sizeof(int), 1, fp);
+    fread(&head->numeroRegistrosInseridos, sizeof(int), 1, fp);
+    fread(&head->numeroRegistrosRemovidos, sizeof(int), 1, fp);
+    fread(&head->numeroRegistrosAtualizado, sizeof(int), 1, fp);
+//points to the beggining of the registers//
+    fseek(fp, 128, SEEK_SET);
+
     return 0;
 }
-	// miscellanea
-int print_reg(REG *reg){
+
+int print_reg(REG *reg, HEAD *head){
+    FILE *fileP=NULL;
+    *fileP = fopen(bin,"r+b");
+
+        //erro//
+    if(fileP == NULL) printf("Falha no processamento do arquivo");
+
+        //reads header
+    bread_head(fileP, &head);
+
+        //checks if there are no regs//
+    if(head->numeroRegistrosInseridos){
+      printf("Registro inexistente");
+      return 0;  
+    } 
+    
+        //goes through every reg printing them//
+    for(int i=0; i < head->numeroRegistrosInseridos; i++){
+        bread_reg(fileP, &reg);
+        //checks if it wasn't removed//
+        if(reg->cidadeMae >= 0 ){
+
+        //checks if there's a valid answer and prints the variable//
+            if(reg->cidadeBebe != '\0'){
+                printf("Nasceu em: %s, ", reg->cidadeBebe);
+            }
+            else{
+                printf("Nasceu em: -, ");
+            }
+
+            if(reg->estadoBebe != '\0$'){
+                printf("/%s, ", reg->estadoBebe);
+            }
+             else{
+                printf("/-, ");
+            }
+            if(reg->dataNascimento[0] != '$'){
+                printf("%s, ", reg->dataNascimento);
+            }
+            else{
+                printf("-, ");
+            }
+
+            if(reg->sexoBebe == 1){
+                printf("um bebe de sexo MASCULINO.\n");
+            }
+            if(reg->sexoBebe == 2){
+                printf("um bebe de sexo FEMININO.\n");
+            }
+            if(reg->sexoBebe == 0){
+                printf("um bebe de sexo IGNORADO.\n");
+            }
+           
+    }
+
+    fclose(bin);
+
     return 0;
+
+//erro//
+    printf("Falha no processamento do arquivo");
 }
 
 int mfeof(FILE *fp) {
