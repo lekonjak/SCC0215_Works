@@ -4,7 +4,6 @@
 int csv2bin(char *csv, char *bin){
         // opening files pointers
 	FILE *input = fopen(csv,"r"), *output = fopen(bin, "w+b");
-    printf("'%s' '%s'", csv, bin);
 	    // starting initial registers to zero
     HEAD head = {0};
     REG reg = {0};
@@ -13,6 +12,7 @@ int csv2bin(char *csv, char *bin){
         // csv first row has only column names
         // ... so... we're going to jump it.
     fscanf(input, "%*[^\n]");
+    fseek(input, 1, SEEK_CUR);
         // writting new registers until EOF
     while(!mfeof(input)){
             // read input line
@@ -74,9 +74,7 @@ int main(void){
 	int op = 0;
         // reading input
 	getline(&args, &size, stdin);
-    printf("%s", args);
         // casting operation to integer
-        //      to-do: using sscanf
 	    op = atoi(strtok(args," \n"));
         // Operation selection
 	if( op == 1 ){
