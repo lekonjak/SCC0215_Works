@@ -2,27 +2,62 @@
 
     // writting registry/header to binary
 int bwrite_reg(FILE *fp, REG *reg){
+    fseek(fp, 0, SEEK_END);
     char dol = '$';
     int i = 0;
         // writting CidadeMae/Bebe string sizes
+    #ifdef DEBUG
+        printf("writting '%d'\t", reg->sizeCidadeMae);
+    #endif
     fwrite(&reg->sizeCidadeMae, sizeof(int), 1 ,fp);
+    #ifdef DEBUG
+        printf("writting '%d'\n", reg->sizeCidadeBebe);
+    #endif
     fwrite(&reg->sizeCidadeBebe, sizeof(int), 1 ,fp);
         // writting if size > 0
     if(reg->sizeCidadeMae)
+    #ifdef DEBUG
+        printf("writting '%s'\n", reg->cidadeMae);
+    #endif
         fwrite(reg->cidadeMae, sizeof(char), reg->sizeCidadeMae, fp);
     if(reg->sizeCidadeBebe)
+    #ifdef DEBUG
+        printf("writting '%s'\n", reg->cidadeBebe);
+    #endif
         fwrite(reg->cidadeBebe, sizeof(char), reg->sizeCidadeBebe, fp);
         // fill remaining reserved space with $
     while(i++< MAX_SIZE - (reg->sizeCidadeMae + reg->sizeCidadeBebe))
         fwrite(&dol, sizeof(char), 1, fp); 
         // writting remaining registry components 
+    #ifdef DEBUG
+        printf("writting '%d'\n", reg->idNascimento);
+    #endif
     fwrite(&reg->idNascimento, sizeof(int), 1, fp);
+    #ifdef DEBUG
+        printf("writting '%d'\n", reg->idadeMae);
+    #endif
     fwrite(&reg->idadeMae, sizeof(int), 1, fp);
+    #ifdef DEBUG
+        printf("writting '%s'\n", reg->dataNascimento);
+    #endif
     fwrite(reg->dataNascimento, sizeof(char), NASC_SIZE, fp);
+    #ifdef DEBUG
+        printf("writting '%c'\n", reg->sexoBebe);
+    #endif
     fwrite(&reg->sexoBebe, sizeof(char), 1, fp);
+    #ifdef DEBUG
+        printf("writting '%s'\n", reg->estadoMae);
+    #endif
     fwrite(reg->estadoMae, sizeof(char), ESTADO_SIZE, fp);
+    #ifdef DEBUG
+        printf("writting '%s'\n", reg->estadoBebe);
+    #endif
     fwrite(reg->estadoBebe, sizeof(char), ESTADO_SIZE, fp);
-        // come back later
+    
+#ifdef DEBUG
+    printf("\n\tOperation end.\n");
+#endif
+
     return 0;
 }
 int bwrite_head(FILE *fp, HEAD *head){
