@@ -47,7 +47,7 @@ int bin2screen(char *bin){
         printf("Registro inexistente");
     }
     else{
-        print_reg(&reg, head.numeroRegistrosInseridos);
+        print_reg(&reg, head.numeroRegistrosInseridos, fp);
     }
 
 	fclose(fp);

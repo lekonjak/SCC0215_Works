@@ -119,7 +119,7 @@ int bread_reg(FILE *fp, REG *reg ){
     position=position+105;
     fseek(fp, position,SEEK_SET);
     
-        // writting remaining registry components 
+        // reading remaining registry components 
     fread(&reg->idNascimento, sizeof(char), 10, fp);
     fread(&reg->idadeMae, sizeof(int), 1, fp);
     fread(reg->dataNascimento, sizeof(char), NASC_SIZE, fp);
@@ -146,11 +146,11 @@ int bread_head(FILE *fp, HEAD *head){
     return 0;
 }
 
-int print_reg(REG *reg, int numeroRegistrosInseridos){
+int print_reg(REG *reg, int numeroRegistrosInseridos, FILE *fp){
     
         //goes through every reg printing them//
     for(int i=0; i < numeroRegistrosInseridos; i++){
-        bread_reg(fileP, reg);
+        bread_reg(fp, reg);
         //checks if it wasn't removed//
         if(reg->cidadeMae >= 0 ){
 
