@@ -108,7 +108,7 @@ int fread_reg(FILE *fp, REG *reg ){
             }else if(i == 3){
                 reg->idadeMae = -1;
             }else if(i == 4){
-                strcpy(reg->dataNascimento, "\0$$$$$$$$$");
+                strncpy(reg->dataNascimento, "\0$$$$$$$$$", NASC_SIZE);
             }else if(i == 5){
                 reg->sexoBebe = '\0';
             }else if(i == 6){
@@ -129,14 +129,14 @@ int fread_reg(FILE *fp, REG *reg ){
             }else if(i == 3){
                 reg->idadeMae = atoi(aux);
             }else if(i == 4){
-                strcpy(reg->dataNascimento, aux);
+                strncpy(reg->dataNascimento, aux, NASC_SIZE);
             }else if(i == 5){
                 reg->sexoBebe = aux[0];
             }else if(i == 6){
-                strcpy(reg->estadoMae, aux);
+                strncpy(reg->estadoMae, aux, ESTADO_SIZE);
             }else{
                 // i == 7
-                strcpy(reg->estadoBebe, aux);
+                strncpy(reg->estadoBebe, aux, ESTADO_SIZE);
             }
         }
         i++;
