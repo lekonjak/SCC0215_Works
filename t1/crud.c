@@ -2,6 +2,8 @@
 
     // writting registry/header to binary
 int bwrite_reg(FILE *fp, REG *reg){
+    char dol = '$';
+    int i = 0;
         // writting CidadeMae/Bebe string sizes
     fwrite(&reg->sizeCidadeMae, sizeof(int), 1 ,fp);
     fwrite(&reg->sizeCidadeBebe, sizeof(int), 1 ,fp);
@@ -11,7 +13,8 @@ int bwrite_reg(FILE *fp, REG *reg){
     if(reg->sizeCidadeBebe)
         fwrite(reg->cidadeBebe, sizeof(char), reg->sizeCidadeBebe, fp);
         // fill remaining reserved space with $
-    fwrite("$", sizeof(char), MAX_SIZE-(reg->sizeCidadeMae + reg->sizeCidadeBebe), fp); 
+    while(i++< MAX_SIZE - (reg->sizeCidadeMae + reg->sizeCidadeBebe))
+        fwrite(&dol, sizeof(char), 1, fp); 
         // writting remaining registry components 
     fwrite(&reg->idNascimento, sizeof(int), 1, fp);
     fwrite(&reg->idadeMae, sizeof(int), 1, fp);
@@ -50,7 +53,11 @@ int fread_reg(FILE *fp, REG *reg ){
     char *line = NULL, *aux = NULL;
     size_t size = GETLINE_RECOMMENDED_SIZE;
         //  reading entire line
-    getline(&line, &size, fp);
+    if(getline(&line, &size, fp)<0){
+        if (aux != NULL) free(aux);
+        return 0;
+    }
+        
         //  extracting tokens with strsep
     while((aux = strsep(&line, ",")) != NULL){
         if(!strcmp(aux, "")){
@@ -70,10 +77,7 @@ int fread_reg(FILE *fp, REG *reg ){
                 // i == 7
                 strcpy(reg->estadoBebe, "\0$");
             }
-
         }else{
-
-
             if(i == 0){
                 reg->sizeCidadeMae = strlen(aux);
                 strcpy(reg->cidadeMae, aux);
@@ -111,4 +115,17 @@ int bread_head(FILE *fp, HEAD *head){
 	// miscellanea
 int print_reg(REG *reg){
     return 0;
+}
+
+int mfeof(FILE *fp) {
+        long cur = ftell(fp), max;
+
+        fseek(fp, 0, SEEK_END);
+        max = ftell(fp);
+
+        fseek(fp, cur, SEEK_SET);
+                    
+        if(ftell(fp) < max)
+            return 0;
+        return 1;
 }
