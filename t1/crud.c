@@ -162,11 +162,11 @@ int print_reg(REG *reg){
             printf("Nasceu em: %s, ", reg->cidadeBebe);
         }
         else{
-            printf("Nasceu em: -, ");
+            printf("Nasceu em: -");
         }
 
         if(reg->estadoBebe[0] != '\0'){
-            printf("/%s, ", reg->estadoBebe);
+            printf("/%s, em ", reg->estadoBebe);
         }
         else{
             printf("/-, ");
