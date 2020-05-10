@@ -11,8 +11,7 @@ int csv2bin(char *csv, char *bin){
     bwrite_head(output, &head);
         // csv first row has only column names
         // ... so... we're going to jump it.
-    fscanf(input, "%*[^\n]");
-    fseek(input, 1, SEEK_CUR);
+    while(fgetc(input) != '\n');
         // writting new registers until EOF
     while(!mfeof(input)){
             // read input line
