@@ -6,6 +6,7 @@
 #include<string.h>
 
 #define MAX_SIZE 97
+#define VAR_SIZE_OFFSET 105
 #define ESTADO_SIZE 2
 #define NASC_SIZE 10
 #define GETLINE_RECOMMENDED_SIZE 120
