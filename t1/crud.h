@@ -4,9 +4,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<string.h>
 
 #define MAX_SIZE 97
+#define VAR_SIZE_OFFSET 105
 #define ESTADO_SIZE 2
 #define NASC_SIZE 10
 #define GETLINE_RECOMMENDED_SIZE 120
@@ -16,7 +16,7 @@
 typedef struct reg{
     char sexoBebe;
 	int sizeCidadeMae, sizeCidadeBebe, idNascimento, idadeMae;
-	char cidadeMae[MAX_SIZE], cidadeBebe[MAX_SIZE], estadoMae[ESTADO_SIZE], estadoBebe[ESTADO_SIZE], dataNascimento[NASC_SIZE];
+	char cidadeMae[MAX_SIZE], cidadeBebe[MAX_SIZE], estadoMae[ESTADO_SIZE+1], estadoBebe[ESTADO_SIZE+1], dataNascimento[NASC_SIZE+1];
 }REG;
 
 typedef struct head{
@@ -31,9 +31,11 @@ int bwrite_head(FILE *fp, HEAD *head);
 int fread_reg(FILE *fp, REG *reg);
 	// reading register from binary
 int bread_reg(FILE *fp, REG *reg);
+	// reading head from binary
+int bread_head(FILE *fp, HEAD *head);
 	// miscellanea
 int print_reg(REG *reg);
-
-int erase_reg(REG *reg);
+    // our feof implementation
+int mfeof(FILE *fp);
 
 #endif

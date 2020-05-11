@@ -1,27 +1,55 @@
 /***************************************
-Autores : 10786121 Luiza Rubio 
-
-****************************************/
-
+ * Autores :    10786121 Luiza Rubio 
+ *              9364890 Ricardo Araujo
+ * ****************************************/
 #include"crud.h"
+#include"binarioNaTela.h"
 
 int csv2bin(char *csv, char *bin){
         // opening files pointers
 	FILE *input = fopen(csv,"r"), *output = fopen(bin, "w+b");
+    
+        // checking for null file pointers
+    if ( input == NULL || output == NULL ){
+        printf("Falha no processamento do arquivo.");
+        return 0; 
+    }
+        
+    char aux = 0;
 	    // starting initial registers to zero
     HEAD head = {0};
     REG reg = {0};
+    
         // writting header into binary file
+    head.status = '0';
     bwrite_head(output, &head);
+        
+        /* csv first row has only column names
+         * ... so... we're going to jump it. */
+    while(aux = fgetc(input)){
+        if(aux == '\n' || aux == EOF)
+            break;
+    }
+        
         // writting new registers until EOF
-    while(fread_reg(input,&reg)){
-            // counting regs 
+    while(!mfeof(input)){
+            // read input line
+        fread_reg(input,&reg);
+#ifdef DEBUG
+        print_reg(&reg);
+#endif
+            // updating header struct values
         head.numeroRegistrosInseridos++;
+        head.RRNproxRegistro++;
+        
+            // moving accordingly to RRNproxRegistro as documentation suggests
+        fseek(output, head.RRNproxRegistro*SIZEOF_REG, SEEK_SET);
+        
             // writting to binary file
         bwrite_reg(output, &reg);
     }
         // updating status byte
-    head.status = 1; 
+    head.status = '1'; 
         // writting header again, with recent values and 
     bwrite_head(output, &head);
         // closing file pointers
@@ -31,9 +59,50 @@ int csv2bin(char *csv, char *bin){
 }
 
 int bin2screen(char *bin){
-	//to do
-	FILE *fp = fopen(bin, "rb");
+        // opening files pointers
+	FILE *fp=NULL;
+    int i = 0;
+	fp = fopen(bin, "rb");
+        // checking for null file pointers
+    if(fp == NULL){
+        printf("Falha no processamento do arquivo.");
+        return 0; 
+    }
 
+	    // starting initial registers to zero
+    HEAD head = {0};
+    REG reg = {0};
+        // reads header
+    bread_head(fp, &head);
+        
+        // exit if inconsistency
+    if( head.status != '1' ){
+        printf("Falha no processamento do arquivo.");
+        fclose(fp);
+        return 0; 
+    }
+    
+        // checks if there are no regs
+    if(head.numeroRegistrosInseridos == 0)
+        printf("Registro inexistente");
+   
+      // salva a posição antes do loop
+    int position= ftell(fp);
+    int aux=0;
+
+        // goes through every reg printing them
+    while(i++ < head.numeroRegistrosInseridos){
+        // read registry on binary
+            bread_reg(fp, &reg);
+        // print its values
+            print_reg(&reg);
+        // atualiza ponteiro pro prox registro
+            aux=position+SIZEOF_REG;
+            fseek(fp,aux,SEEK_SET);
+            position=aux;
+
+    }   
+        
 	fclose(fp);
 	return 0;
 }
@@ -41,20 +110,21 @@ int bin2screen(char *bin){
 int main(void){
         // setting getline variables to read input
 	size_t size = GETLINE_RECOMMENDED_SIZE;
-	char *args = NULL;
+	char *args = NULL, *in = NULL, *out = NULL;
 	int op = 0;
         // reading input
 	getline(&args, &size, stdin);
         // casting operation to integer
-        //      to-do: using sscanf
 	    op = atoi(strtok(args," \n"));
-
         // Operation selection
 	if( op == 1 ){
             // reads csv file and output to binary file
-		csv2bin(strtok(NULL," \n"),strtok(NULL," \n"));
+        in = strtok(NULL, " \n");
+        out = strtok(NULL, " \n");
+		csv2bin(in, out);
+        binarioNaTela(out);
 	}else if( op == 2 ){
-            // reads binary file and outputs to stdout
+        // reads binary file and outputs to stdout
 		bin2screen(strtok(NULL, " \n"));	
 	}
         // getline memory free
