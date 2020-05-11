@@ -8,21 +8,24 @@
 int csv2bin(char *csv, char *bin){
         // opening files pointers
 	FILE *input = fopen(csv,"r"), *output = fopen(bin, "w+b");
-
+    
+        // checking for null file pointers
     if ( input == NULL || output == NULL ){
         printf("Falha no processamento do arquivo.");
         return 0; 
     }
-    
+        
     char aux = 0;
 	    // starting initial registers to zero
     HEAD head = {0};
-    head.status = '0';
     REG reg = {0};
+    
         // writting header into binary file
+    head.status = '0';
     bwrite_head(output, &head);
-        // csv first row has only column names
-        // ... so... we're going to jump it.
+        
+        /* csv first row has only column names
+         * ... so... we're going to jump it. */
     while(aux = fgetc(input)){
         if(aux == '\n' || aux == EOF)
             break;
@@ -35,11 +38,13 @@ int csv2bin(char *csv, char *bin){
 #ifdef DEBUG
         print_reg(&reg);
 #endif
-            // counting regs 
+            // updating header struct values
         head.numeroRegistrosInseridos++;
         head.RRNproxRegistro++;
         
+            // moving accordingly to RRNproxRegistro as documentation suggests
         fseek(output, head.RRNproxRegistro*SIZEOF_REG, SEEK_SET);
+        
             // writting to binary file
         bwrite_reg(output, &reg);
     }
@@ -54,48 +59,50 @@ int csv2bin(char *csv, char *bin){
 }
 
 int bin2screen(char *bin){
-
+        // opening files pointers
 	FILE *fp=NULL;
     int i = 0;
 	fp = fopen(bin, "rb");
-        //in case it didnt open//
+        // checking for null file pointers
     if(fp == NULL){
         printf("Falha no processamento do arquivo.");
         return 0; 
     }
 
+	    // starting initial registers to zero
     HEAD head = {0};
     REG reg = {0};
-        //reads header//
+        // reads header
     bread_head(fp, &head);
+        
+        // exit if inconsistency
     if( head.status != '1' ){
         printf("Falha no processamento do arquivo.");
         fclose(fp);
         return 0; 
     }
-    //checks if there are no regs//
+    
+        // checks if there are no regs
     if(head.numeroRegistrosInseridos == 0)
         printf("Registro inexistente");
    
-      //salva a posição antes do loop
+      // salva a posição antes do loop
     int position= ftell(fp);
     int aux=0;
-        //goes through every reg printing them
+
+        // goes through every reg printing them
     while(i++ < head.numeroRegistrosInseridos){
         // read registry on binary
             bread_reg(fp, &reg);
         // print its values
             print_reg(&reg);
-            //atualiza ponteiro pro prox registro//
-            aux=position+128;
+        // atualiza ponteiro pro prox registro
+            aux=position+SIZEOF_REG;
             fseek(fp,aux,SEEK_SET);
             position=aux;
 
     }   
         
-
-
-
 	fclose(fp);
 	return 0;
 }
