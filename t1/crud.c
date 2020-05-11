@@ -2,7 +2,7 @@
 
     // writting registry/header to binary
 int bwrite_reg(FILE *fp, REG *reg){
-    fseek(fp, 0, SEEK_END);
+    //fseek(fp, 0, SEEK_END);
     char dol = '$';
     int i = 0;
         // writting CidadeMae/Bebe string sizes
