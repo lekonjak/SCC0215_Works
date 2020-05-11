@@ -108,14 +108,17 @@ int fread_reg(FILE *fp, REG *reg ){
             }else if(i == 3){
                 reg->idadeMae = -1;
             }else if(i == 4){
-                strncpy(reg->dataNascimento, "\0$$$$$$$$$", NASC_SIZE);
+                strncpy(reg->dataNascimento, "$$$$$$$$$$", NASC_SIZE);
+                reg->dataNascimento[0] = '\0';
             }else if(i == 5){
                 reg->sexoBebe = '\0';
             }else if(i == 6){
-                strcpy(reg->estadoMae, "\0$");
+                strcpy(reg->estadoMae, "$$");
+                reg->estadoMae[0] = '\0';
             }else{
                 // i == 7
-                strcpy(reg->estadoBebe, "\0$");
+                strcpy(reg->estadoBebe, "$$");
+                reg->estadoMae[0] = '\0';
             }
         }else{
             if(i == 0){
@@ -201,7 +204,7 @@ int print_reg(REG *reg){
     if(reg->cidadeMae >= 0 ){
 
         //checks if there's a valid answer and prints the variable//
-        if(reg->cidadeBebe[0] != '\0'){
+        if(reg->sizeCidadeBebe > 0){
             printf("Nasceu em: %s", reg->cidadeBebe);
         }
         else{
@@ -214,7 +217,7 @@ int print_reg(REG *reg){
         else{
             printf("/-, em ");
         }
-        if(reg->dataNascimento[0] != '$'){
+        if(reg->dataNascimento[0] != '\0'){
             printf("%s, ", reg->dataNascimento);
         }
         else{
