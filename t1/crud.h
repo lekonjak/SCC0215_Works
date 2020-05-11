@@ -15,7 +15,7 @@
 typedef struct reg{
     char sexoBebe;
 	int sizeCidadeMae, sizeCidadeBebe, idNascimento, idadeMae;
-	char cidadeMae[MAX_SIZE], cidadeBebe[MAX_SIZE], estadoMae[ESTADO_SIZE], estadoBebe[ESTADO_SIZE], dataNascimento[NASC_SIZE];
+	char cidadeMae[MAX_SIZE], cidadeBebe[MAX_SIZE], estadoMae[ESTADO_SIZE+1], estadoBebe[ESTADO_SIZE+1], dataNascimento[NASC_SIZE+1];
 }REG;
 
 typedef struct head{
