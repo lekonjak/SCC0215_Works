@@ -131,6 +131,9 @@ int fread_reg(FILE *fp, REG *reg ){
             }else if(i == 4){
                 strncpy(reg->dataNascimento, aux, NASC_SIZE);
             }else if(i == 5){
+#ifdef DEBUG
+    printf("baby sex: %s\n", aux);
+#endif
                 reg->sexoBebe = aux[0];
             }else if(i == 6){
                 strncpy(reg->estadoMae, aux, ESTADO_SIZE);
@@ -214,9 +217,9 @@ int print_reg(REG *reg){
             printf("-, ");
         }
 
-        if(reg->sexoBebe == 1){
+        if(reg->sexoBebe == '1'){
             printf("um bebe de sexo MASCULINO.\n");
-        }else if(reg->sexoBebe == 2){
+        }else if(reg->sexoBebe == '2'){
             printf("um bebe de sexo FEMININO.\n");
         }else{ //(reg->sexoBebe == 0)
             printf("um bebe de sexo IGNORADO.\n");
