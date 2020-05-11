@@ -225,11 +225,11 @@ int print_reg(REG *reg){
         }
 
         if(reg->sexoBebe == '1'){
-            printf("um bebe de sexo MASCULINO.\n");
+            printf("um bebê de sexo MASCULINO.\n");
         }else if(reg->sexoBebe == '2'){
-            printf("um bebe de sexo FEMININO.\n");
+            printf("um bebê de sexo FEMININO.\n");
         }else{ //(reg->sexoBebe == 0)
-            printf("um bebe de sexo IGNORADO.\n");
+            printf("um bebê de sexo IGNORADO.\n");
         }
 
        return 1; 
