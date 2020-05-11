@@ -153,7 +153,7 @@ int fread_reg(FILE *fp, REG *reg ){
     // reading register from binary
 int bread_reg(FILE *fp, REG *reg ){
     //stores position of pointer//
-//    int position= ftell(fp);
+   int position= ftell(fp);
      // reads CidadeMae/Bebe string sizes
     fread(&reg->sizeCidadeMae, sizeof(int), 1 ,fp);
     fread(&reg->sizeCidadeBebe, sizeof(int), 1 ,fp);
@@ -166,10 +166,10 @@ int bread_reg(FILE *fp, REG *reg ){
         reg->cidadeBebe[reg->sizeCidadeBebe] = '\0';
     }
 //sets pointer to the begining of the rest of the variables
-   // fseek(fp, 0,SEEK_SET);
-   // position=position+105;
-   // fseek(fp, position,SEEK_SET);
-   fseek(fp, MAX_SIZE - (reg->sizeCidadeBebe + reg->sizeCidadeBebe), SEEK_CUR);
+    fseek(fp, 0,SEEK_SET);
+    position=position+105;
+    fseek(fp, position,SEEK_SET);
+  // fseek(fp, MAX_SIZE - (reg->sizeCidadeBebe + reg->sizeCidadeBebe), SEEK_CUR);
         // reading remaining registry components 
     fread(&reg->idNascimento, sizeof(int), 1, fp);
     fread(&reg->idadeMae, sizeof(int), 1, fp);

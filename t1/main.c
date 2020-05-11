@@ -54,13 +54,24 @@ int bin2screen(char *bin){
     if(head.numeroRegistrosInseridos == 0)
         printf("Registro inexistente");
    
+      //salva a posição antes do loop
+    int position= ftell(fp);
+    int aux=0;
         //goes through every reg printing them
     while(i++ < head.numeroRegistrosInseridos){
         // read registry on binary
             bread_reg(fp, &reg);
         // print its values
             print_reg(&reg);
+            //atualiza ponteiro pro prox registro//
+            aux=position+128;
+            fseek(fp,aux,SEEK_SET);
+            position=aux;
+
     }   
+        
+
+
 
 	fclose(fp);
 	return 0;
