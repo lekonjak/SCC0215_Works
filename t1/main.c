@@ -4,6 +4,13 @@
 int csv2bin(char *csv, char *bin){
         // opening files pointers
 	FILE *input = fopen(csv,"r"), *output = fopen(bin, "w+b");
+
+    if ( input == NULL || output == NULL ){
+        printf("Falha no processamento do arquivo.");
+        return 0; 
+    }
+    
+    char aux = 0;
 	    // starting initial registers to zero
     HEAD head = {0};
     REG reg = {0};
@@ -11,7 +18,11 @@ int csv2bin(char *csv, char *bin){
     bwrite_head(output, &head);
         // csv first row has only column names
         // ... so... we're going to jump it.
-    while(fgetc(input) != '\n');
+    while(aux = fgetc(input)){
+        if(aux == '\n' || aux == EOF)
+            break;
+    }
+        
         // writting new registers until EOF
     while(!mfeof(input)){
             // read input line
@@ -21,11 +32,14 @@ int csv2bin(char *csv, char *bin){
 #endif
             // counting regs 
         head.numeroRegistrosInseridos++;
+        head.RRNproxRegistro++;
+        
+        fseek(output, head.RRNproxRegistro*SIZEOF_REG, SEEK_SET);
             // writting to binary file
         bwrite_reg(output, &reg);
     }
         // updating status byte
-    head.status = 1; 
+    head.status = '1'; 
         // writting header again, with recent values and 
     bwrite_head(output, &head);
         // closing file pointers
@@ -41,7 +55,7 @@ int bin2screen(char *bin){
 	fp = fopen(bin, "rb");
         //in case it didnt open//
     if(fp == NULL){
-        printf("Falha no processamento do arquivo");
+        printf("Falha no processamento do arquivo.");
         return 0; 
     }
 
