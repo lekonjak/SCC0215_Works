@@ -1,3 +1,7 @@
+/***************************************
+ * Autores :    10786121 Luiza Rubio 
+ *              9364890 Ricardo Araujo
+ * ****************************************/
 #include"crud.h"
 #include"binarioNaTela.h"
 
@@ -13,6 +17,7 @@ int csv2bin(char *csv, char *bin){
     char aux = 0;
 	    // starting initial registers to zero
     HEAD head = {0};
+    head.status = '0';
     REG reg = {0};
         // writting header into binary file
     bwrite_head(output, &head);
@@ -63,7 +68,11 @@ int bin2screen(char *bin){
     REG reg = {0};
         //reads header//
     bread_head(fp, &head);
-
+    if( head.status != '1' ){
+        printf("Falha no processamento do arquivo.");
+        fclose(fp);
+        return 0; 
+    }
     //checks if there are no regs//
     if(head.numeroRegistrosInseridos == 0)
         printf("Registro inexistente");
