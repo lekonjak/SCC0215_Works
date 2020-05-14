@@ -110,8 +110,10 @@ int bin2screen(char *bin){
 int main(void){
         // setting getline variables to read input
 	size_t size = GETLINE_RECOMMENDED_SIZE;
-	char *args = NULL, *in = NULL, *out = NULL;
-	int op = 0;
+	char *args, *in, *out, *aux1, *aux2;
+    args = in = out = aux1 = aux2 = NULL;
+	int op, m, m2;
+    op = m = m2 = 0;
         // reading input
 	getline(&args, &size, stdin);
         // casting operation to integer
@@ -126,7 +128,61 @@ int main(void){
 	}else if( op == 2 ){
         // reads binary file and outputs to stdout
 		bin2screen(strtok(NULL, " \n"));	
-	}
+    }else if( op == 3 ){
+        in = strtok(NULL, " \n");
+            // reading number of arguments
+        op = atoi(strtok(NULL, " \n"));
+        while(op--){
+            aux1 = strtok(NULL, " \n");
+            aux2 = strtok(NULL, " \n");
+            // append to somewhere ?
+        }
+        // call a search function by provided partial register, returning
+        // reg(s) or rrn and print it
+    }else if( op == 4 ){
+        in = strtok(NULL, " \n");
+        op = atoi(strtok(NULL, " \n"));
+        // call a getbyrrn function, return reg and print it.
+    }else if( op == 5 ){
+        in = strtok(NULL, " \n");
+        op = atoi(strtok(NULL, " \n"));
+        while(op--){
+                // reads a input line in unuset char *out
+                //          check if size reusage could lead to bugs
+            getline(&out, &size, stdin); 
+            m = atoi(strtok(out, " \n"));
+            while(m--){
+                aux1 = strtok(NULL, " \n");
+                aux2 = strtok(NULL, " \n");
+                // append to somewhere ?
+            }
+            free(out);
+            // call a search function by provided partial register
+            // remove register
+        }
+        binarioNaTela(in);
+        // call to func 5
+    }else if( op == 6 ){
+        in = strtok(NULL, " \n");
+        op = atoi(strtok(NULL, " \n"));
+        while(op--){
+            // getline(&out, &size, stdin); ?
+            // strip data from line
+            // write on reg
+            //          fwrite_reg(reg);
+            // reg to file
+        }
+        // call to func 6
+    }else if( op == 7 ){
+        in = strtok(NULL, " \n");
+        op = atoi(strtok(NULL, " \n"));
+        while(op--){
+            // getline(&out, &size, stdin);
+            //
+            // free(out);
+                // call to func 7, updating a reg on .bin
+        }
+    }
         // getline memory free
 	free(args);	
 
