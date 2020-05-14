@@ -107,6 +107,47 @@ int bin2screen(char *bin){
 	return 0;
 }
 
+int rrn2screen(char *bin, int rrn){
+        // opening files pointers
+	FILE *b = fopen(bin, "rb");
+    
+        // checking for null file pointers
+    if ( b == NULL ){
+        printf("Falha no processamento do arquivo.");
+        return 0; 
+    }
+        
+	    // starting initial registers to zero
+    HEAD head = {0};
+    REG reg = {0};
+    
+        // reads header
+    bread_head(b, &head);
+
+        // exit if inconsistency
+    if( head.status != '1' ){
+        printf("Falha no processamento do arquivo.");
+        fclose(b);
+        return 1; 
+    }
+    
+        // checks if there are no regs
+    if(head.numeroRegistrosInseridos == 0){
+        printf("Registro inexistente");
+        return 1;
+    }   
+
+        // moving accordingly documentation suggests
+    fseek(b, rrn*SIZEOF_REG, SEEK_SET);
+        
+        // reading on position in binary file
+    bread_reg(b, &reg);
+    print_reg(&reg);
+
+    fclose(b);
+    return 0;
+}
+
 int main(void){
         // setting getline variables to read input
 	size_t size = GETLINE_RECOMMENDED_SIZE;
@@ -143,6 +184,7 @@ int main(void){
         in = strtok(NULL, " \n");
         op = atoi(strtok(NULL, " \n"));
         // call a getbyrrn function, return reg and print it.
+        rrn2screen(in, op);
     }else if( op == 5 ){
         in = strtok(NULL, " \n");
         op = atoi(strtok(NULL, " \n"));
