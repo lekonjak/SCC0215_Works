@@ -40,10 +40,7 @@ int csv2bin(char *csv, char *bin){
 #endif
             // updating header struct values
         head.numeroRegistrosInseridos++;
-        head.RRNproxRegistro++;
-        
-            // moving accordingly to RRNproxRegistro as documentation suggests
-        fseek(output, head.RRNproxRegistro*SIZEOF_REG, SEEK_SET);
+        head.RRNproxRegistro++; 
         
             // writting to binary file
         bwrite_reg(output, &reg);
@@ -170,11 +167,14 @@ int main(void){
         // reads binary file and outputs to stdout
 		bin2screen(strtok(NULL, " \n"));	
     }else if( op == 3 ){
+	REG reg = {0};
         in = strtok(NULL, " \n");
             // reading number of arguments
         op = atoi(strtok(NULL, " \n"));
         while(op--){
+		// receiving NomeDoCampon
             aux1 = strtok(NULL, " \n");
+	    	// ... and its value
             aux2 = strtok(NULL, " \n");
             // append to somewhere ?
         }
