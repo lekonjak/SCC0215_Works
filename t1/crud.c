@@ -247,3 +247,39 @@ int mfeof(FILE *fp) {
         return 0;
     return 1;
 }
+
+int quotes_clean(char *c){
+	int i = 0, j = 0;
+		// goes through entire string
+	while(c[i]!= '\0'){
+		if( c[i] == '"'){	// jumps over quotes
+			i++;
+			continue;
+		}
+		c[j] = c[i];
+		i++;
+		j++;
+	} 
+		// setting string end
+	c[j+1] = '\0';
+
+}
+
+int space_converter(char *c){
+	int i = 0;
+	char d = 1;
+	while( c[i] != '\0'){
+		d = c[i] == '"' ? -d : d;
+		if ( c[i] == ' ' && d < 0 )
+			c[i] = '&';
+		i++;
+	}
+}
+
+int space_return(char *c){
+	int i = 0;
+	while(c[i] != '\0'){
+		c[i] = c[i] == '&' ? ' ' : c[i];
+		i++;
+	}
+}

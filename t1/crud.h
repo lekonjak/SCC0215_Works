@@ -39,5 +39,9 @@ int print_reg(REG *reg);
 int mfeof(FILE *fp);
 	// remove quotes from strings
 int quotes_clean(char *c);
+	// to handle with quoted sentences with spaces using strtok
+int space_converter(char *c);
+	// to convert back a sentence converted by space_converter
+int space_return(char *c);
 
 #endif
