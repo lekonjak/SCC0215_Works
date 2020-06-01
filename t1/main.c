@@ -157,7 +157,7 @@ int search(char *bin, REG *reg, char mask[8]){
     	    
     	        // starting initial registers to zero
     	HEAD head = {0};
-    	REG reg = {0};
+    	REG auxReg = {0};
     	
     	    // reads header
     	bread_head(b, &head);
@@ -229,14 +229,14 @@ int main(void){
 		    quotes_clean(tmp);
 
 		    reg.sizeCidadeMae = strlen(tmp);
-		    if(strlen(tmp) > 0 )	strcpy(reg.CidadeMae, tmp);
+		    if(strlen(tmp) > 0 )	strcpy(reg.cidadeMae, tmp);
 	    }else if (strcmp("cidadeBebe", aux1) == 0){
 		    mask[1]++;
 		    strcpy(tmp, aux2);
 		    quotes_clean(tmp);
 
 		    reg.sizeCidadeBebe = strlen(tmp);
-		    if(strlen(tmp) > 0 )	strcpy(reg.CidadeBebe, tmp);
+		    if(strlen(tmp) > 0 )	strcpy(reg.cidadeBebe, tmp);
 	    }else if (strcmp("idNascimento", aux1) == 0){
 		    mask[2]++;
 		    strcpy(tmp, aux2);
