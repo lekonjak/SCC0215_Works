@@ -261,7 +261,7 @@ int quotes_clean(char *c){
 		j++;
 	} 
 		// setting string end
-	c[j+1] = '\0';
+	c[j] = '\0';
 
 }
 
