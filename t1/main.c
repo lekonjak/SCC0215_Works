@@ -120,7 +120,7 @@ int rrn2screen(char *bin, int rrn){
     	
     	    // reads header
     	bread_head(b, &head);
-
+	
     	    // exit if inconsistency
     	if( head.status != '1' ){
     	    printf("Falha no processamento do arquivo.");
@@ -133,7 +133,7 @@ int rrn2screen(char *bin, int rrn){
     	    printf("Registro inexistente");
     	    return 1;
     	}   
-
+	
     	    // moving accordingly documentation suggests
     	fseek(b, rrn*SIZEOF_REG, SEEK_SET);
     	    
@@ -173,38 +173,45 @@ int search(char *bin, REG *reg, char mask[8]){
     	while(!feof(b)){
 		bread_reg(b, &auxReg);
 		
-		if (mask[0])
+		if (mask[0]){
 			// comparing cidadeMae 
 			if ( reg->sizeCidadeMae != auxReg.sizeCidadeMae  || \
 					strcmp(reg->cidadeMae, auxReg.cidadeMae) != 0) continue;
-		if (mask[1])
+		}
+		if (mask[1]){
 			// comparing cidadeBebe 
 			if ( reg->sizeCidadeBebe != auxReg.sizeCidadeBebe  || \
 					strcmp(reg->cidadeBebe, auxReg.cidadeBebe) != 0) continue;
-		if (mask[2])
+		}
+		if (mask[2]){
 			// comparing idNascimento
 			if ( reg->idNascimento != auxReg.idNascimento) continue;
-		if (mask[3])
+		}
+		if (mask[3]){
 			// comparing idadeMae
 			if ( reg->idadeMae != auxReg.idadeMae) continue;	
-		if (mask[4])
+		}
+		if (mask[4]){
 			// comparing dataNascimento
 			if ( strcmp(reg->dataNascimento, auxReg.dataNascimento) != 0) continue;
-		if (mask[5])
+		}
+		if (mask[5]){
 			// comparing sexoBebe
 			if ( reg->sexoBebe != auxReg.sexoBebe ) continue;
-		if (mask[6])
+		}
+		if (mask[6]){
 			// comparing estadoMae
 			if ( strcmp(reg->estadoMae, auxReg.estadoMae) != 0) continue;
+		}
+		if (mask[7]){
 			// comparing estadoBebe
-		if (mask[7])
 			if ( strcmp(reg->estadoBebe, auxReg.estadoBebe) != 0) continue;
+		}
 	
 		// theoretically, if it gets here without jumping to loop next iteration, it matches search criteria
 		print_reg(&auxReg);	
 	}
     
-    	//print_reg(&reg);
 
    	fclose(b);
 	return 0;
@@ -220,6 +227,11 @@ int main(void){
         // reading input
 	getline(&args, &size, stdin);
 	space_converter(args);
+	quotes_clean(args);
+#ifdef DEBUG
+			
+		    printf("%s", args);
+#endif
         // casting operation to integer
 	    op = atoi(strtok(args," \n"));
         // Operation selection
@@ -250,59 +262,37 @@ int main(void){
 			// treating values and setting mask
 		    if (strcmp("cidadeMae", aux1) == 0){
 			    mask[0]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-
-			    reg.sizeCidadeMae = strlen(tmp);
-			    if(strlen(tmp) > 0 )	strcpy(reg.cidadeMae, tmp);
+			    space_return(aux2);
+			    reg.sizeCidadeMae = strlen(aux2);
+			    if(strlen(aux2) > 0 )	strcpy(reg.cidadeMae, aux2);
 		    }else if (strcmp("cidadeBebe", aux1) == 0){
 			    mask[1]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-
-			    reg.sizeCidadeBebe = strlen(tmp);
-			    if(strlen(tmp) > 0 )	strcpy(reg.cidadeBebe, tmp);
+			    space_return(aux2);
+			    reg.sizeCidadeBebe = strlen(aux2);
+			    if(strlen(aux2) > 0 )	strcpy(reg.cidadeBebe, aux2);
 		    }else if (strcmp("idNascimento", aux1) == 0){
 			    mask[2]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-			    
-			    reg.idNascimento = atoi(tmp);
+			    reg.idNascimento = atoi(aux2);
 		    }else if (strcmp("idadeMae", aux1) == 0){
 			    mask[3]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-
-			    reg.idadeMae = atoi(tmp);
+			    reg.idadeMae = atoi(aux2);
 		    }else if (strcmp("dataNascimento", aux1) == 0){ 
 			    mask[4]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-
-			    strcpy(reg.dataNascimento, tmp);
+			    strcpy(reg.dataNascimento, aux2);
 		    }else if (strcmp("sexoBebe", aux1) == 0){
 			    mask[5]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-
-			    reg.sexoBebe = tmp[0];
+			    reg.sexoBebe = aux2[0];
 		    }else if (strcmp("estadoMae", aux1) == 0){
 			    mask[6]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-
-			    strcpy(reg.estadoMae, tmp);
+			    strcpy(reg.estadoMae, aux2);
 		    }else if (strcmp("estadoBebe", aux1) == 0){
 			    mask[7]++;
-			    strcpy(tmp, aux2);
-			    quotes_clean(tmp);
-
-			    strcpy(reg.estadoBebe, tmp);
+			    strcpy(reg.estadoBebe, aux2);
 		    }else{
 		    	// error case, invalid nomeDoCampo
 		    }
-		    search(in, &reg, mask);
         	}
+		search(in, &reg, mask);
         // call a search function by provided partial register, returning
         // reg(s) or rrn and print it
     	}else if( op == 4 ){
