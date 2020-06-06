@@ -81,7 +81,7 @@ int bin2screen(char *bin){
     	
     	    // checks if there are no regs
     	if(head.numeroRegistrosInseridos == 0)
-    	    printf("Registro inexistente");
+    	    printf("Registro Inexistente");
    
     	  // salva a posição antes do loop
     	int position= ftell(fp);
@@ -130,7 +130,7 @@ int rrn2screen(char *bin, int rrn){
     	
     	    // checks if there are no regs
     	if(head.numeroRegistrosInseridos == 0){
-    	    printf("Registro inexistente");
+    	    printf("Registro Inexistente.");
     	    return 1;
     	}   
 	
@@ -346,7 +346,7 @@ int update_rrn(char *out, char *bin){
     
         // checks if there are no regs
     if(head.numeroRegistrosInseridos == 0){
-        printf("Registro inexistente");
+        printf("Registro Inexistente");
         return 1;
     }  
     // goes to the right register
@@ -394,7 +394,7 @@ int update_rrn(char *out, char *bin){
         int totalreg = head.numeroRegistrosAtualizado + 1;
         fwrite((&totalreg),sizeof(int), 1, b);
 
-pclose(b);
+fclose(b);
 return 0;
 }
 
@@ -429,7 +429,7 @@ int add_reg(char *out,  char *bin){
 //idNascimento
     str = strtok(NULL, " ");
     reg.idNascimento = atoi(str);
-    printf("%d\n", reg.idNascimento);
+ 
 
 //idadeMae
     str = strtok(NULL," ");
@@ -473,7 +473,7 @@ int add_reg(char *out,  char *bin){
         // checking for null file pointers
     if ( b == NULL ){
         printf("Falha no processamento do arquivo.");
-        return 0; 
+        return 1; 
     }
         // reads header
     bread_head(b, &head);
@@ -539,7 +539,7 @@ fwrite(&total,sizeof(int), 1, b);
 fseek(b,0,SEEK_SET);
 fwrite(&one,sizeof(char), 1, b);
 
-pclose(b);
+fclose(b);
 return 0;
 
 }
@@ -698,8 +698,11 @@ int main(void){
                 // dealing with quotes and spaces to strtok usage
             space_converter(out);
             quotes_clean(out);
-            add_reg(out, in);
+            if(add_reg(out, in)) {
+              free(out);  
+              return 0;
             }
+        }
         //print_reg(&reg);
         free(out);
         // call a search function by provided partial register
@@ -714,7 +717,11 @@ int main(void){
             getline(&out, &size, stdin);
             space_converter(out);
             quotes_clean(out);
-            update_rrn(out, in);    
+            if(update_rrn(out, in)) {
+              free(out);  
+              return 0;
+            }
+                
         }
         free(out);
         binarioNaTela(in);
