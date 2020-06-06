@@ -214,11 +214,11 @@ int print_reg(REG *reg){
         else{
             printf("/-, em ");
         }
-        if(strcmp(reg->dataNascimento,"\0$$$$$$$$$") == 0){
-             printf("-, ");
+        if(reg->dataNascimento[0] != '\0'){
+            printf("%s, ", reg->dataNascimento);
         }
         else{
-           printf("%s, ", reg->dataNascimento);
+            printf("-, ");
         }
 
         if(reg->sexoBebe == '1'){
@@ -234,85 +234,38 @@ int print_reg(REG *reg){
     return 0;
 }
 
-int mfeof(FILE *fp) {
-        // feof that works
-    long cur = ftell(fp), max;
-
-    fseek(fp, 0, SEEK_END);
-    max = ftell(fp);
-
-    fseek(fp, cur, SEEK_SET);
-        // """"""compares SEEK_CUR with EOF""""""
-    if(cur < max)
-        return 0;
-    return 1;
-}
-
-int quotes_clean(char *c){
-	int i = 0, j = 0;
-		// goes through entire string
-	while(c[i]!= '\0'){
-		if( c[i] == '"'){	// jumps over quotes
-			i++;
-			continue;
-		}
-		c[j] = c[i];
-		i++;
-		j++;
-	} 
-		// setting string end
-	c[j] = '\0';
-
-}
-
-int space_converter(char *c){
-	int i = 0;
-	char d = 1;
-	while( c[i] != '\0'){
-		d = c[i] == '"' ? -d : d;
-		if ( c[i] == ' ' && d < 0 ){
-            c[i] = '&';
-        }
-		i++;
-	}
-}
-
-int space_return(char *c){
-	int i = 0;
-	while(c[i] != '\0'){
-		c[i] = c[i] == '&' ? ' ' : c[i];
-		i++;
-	}
-}
 
 
 int update_field(char *strType, char *strContent, FILE *b){
         REG reg = {0};   
-        char dol = '$', one = '1', two = '2', empty= '\0'; 
-        char null[2];
-        strcpy(null, "\0$");
+        char dol = '$', one = '1', two = '2';
         int NextField = ftell(b) + 105;
-        int aux=-1, bo, number=0, zero=0;
+        int aux=-1, bo,  null = 0, number=0, zero=0;
         int compare=0;
-        char str[10];
-        strcpy(str, "\0$$$$$$$$$"); 
+        printf("%d\n", compare);
         int kkk= ftell(b);
         int CityLength;
         int bbb;
         //checks which one is the field to be updated
-       
-///idNAscimento
+
+        //IDADE DO BEBE/
          compare = strcmp(strType, "idNascimento");
         if(!compare){
+
             //moves pointer to right position//
             fseek(b, 105,SEEK_CUR);
-            //checks if value is NULL
-            compare = strcmp(strContent, "NULO");
-            if(!compare){
-                fwrite(&aux,sizeof(int),1,b);
-            }else fwrite(&strContent,sizeof(int),1,b);
-        }
 
+            
+            //checks the gender and writes in the proper place
+            compare=strcmp(strContent, "MASCULINO");
+            if(!compare){
+                fwrite(&one,sizeof(char),1,b);
+            }
+            compare=strcmp(strContent, "FEMININO");
+            if(!compare){
+                fwrite(&two,sizeof(char),1,b);
+            }
+        }
             //IDADE MAE//
         compare = strcmp(strType, "idadeMae");
         if(!compare){
@@ -324,24 +277,11 @@ int update_field(char *strType, char *strContent, FILE *b){
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(&aux,sizeof(int),1,b);
+                fwrite(&null,sizeof(int),1,b);
             } else fwrite(&number,sizeof(int),1,b);
         }
                   
-
-//dataNAscimento
-          compare = strcmp(strType, "dataNascimento");
-        if(!compare){
-            //moves pointer to right position//
-            fseek(b, 113,SEEK_CUR);
-            //checks if value is NULL
-            compare = strcmp(strContent, "NULO");
-            if(!compare){
-                fwrite(&str,sizeof(char),10,b);
-            }else fwrite(&strContent,sizeof(char),10,b);
-        }
-
-//        //SEXO BEBE//
+        //SEXO BEBE//
         compare = strcmp(strType, "sexoBebe");
         if(!compare){
 
@@ -351,27 +291,46 @@ int update_field(char *strType, char *strContent, FILE *b){
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(&empty,sizeof(char),1,b);
+                fwrite(&null,sizeof(char),1,b);
             }
 
             //checks the gender and writes in the proper place
-            compare=strcmp(strContent, "1");
+            compare=strcmp(strContent, "MASCULINO");
             if(!compare){
                 fwrite(&one,sizeof(char),1,b);
             }
-            compare=strcmp(strContent, "2");
+            compare=strcmp(strContent, "FEMININO");
             if(!compare){
                 fwrite(&two,sizeof(char),1,b);
             }
         }
+          /*  bo = ftell(b);
+            printf("%d dentro\n", ftell(b));
+*/
+        //nascimento bebe//
+        compare = strcmp(strType, "dataNascimento");
+        printf("%d data \n", compare);
+        if(!compare){
 
-       
- //          //ESTADO MAE
+            //moves pointer to right position//
+            fseek(b, 113,SEEK_CUR);
+            kkk= ftell(b);
+            printf("%d dentro \n", kkk);
+             //checks if the value altered is NULL//
+           compare = strcmp(strContent, "NULO");
+            if(!compare){
+                fwrite(&null,sizeof(char),1,b);
+            } else fwrite(strContent, sizeof(char), 10, b);
+        }
+
+           //ESTADO MAE
         compare = strcmp(strType, "estadoMae");
+        printf("%d estado \n", compare);
         if(!compare){
 
             //moves pointer to right position//
             fseek(b, 124,SEEK_CUR);
+            bo=ftell(b);
             
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
@@ -380,12 +339,14 @@ int update_field(char *strType, char *strContent, FILE *b){
             } else fwrite(strContent, sizeof(char), 2, b);
         }
         
-  //       //ESTADO BEBE
+         //ESTADO BEBE
         compare = strcmp(strType, "estadoBebe");
+        printf("%d estado \n", compare);
         if(!compare){
 
             //moves pointer to right position//
             fseek(b, 126,SEEK_CUR);
+            bo=ftell(b);
             
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
@@ -395,18 +356,26 @@ int update_field(char *strType, char *strContent, FILE *b){
         }
 
 
-  //        ///CIDADE MAE// 
+          ///CIDADE MAE// 
          compare = strcmp(strType, "cidadeMae");
+        printf("%d CidadeMae \n", compare);
+        kkk=ftell(b);
+            printf("%d\n", kkk);
         if(!compare){
             int position =ftell(b);
             NextField= position +105;
+            kkk=ftell(b);
+            printf("%d\n", kkk);
 
              //saves the register
             bread_reg(b, &reg);
+            kkk=ftell(b);
+            printf("%d\n", kkk);
 
             //moves pointer to right position//
             fseek(b, -120,SEEK_CUR);
 
+            bbb =ftell(b);
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
@@ -424,6 +393,7 @@ int update_field(char *strType, char *strContent, FILE *b){
             fseek(b, position, SEEK_SET);
             fwrite(&zero,sizeof(int), 1, b);
             }
+            
 
             } else{
                 fseek(b, position, SEEK_SET);
@@ -445,21 +415,27 @@ int update_field(char *strType, char *strContent, FILE *b){
 
                 } 
             }
-        }         
+        }
             
-//        //CIDADE DO BEBE//
+            
+        //CIDADE DO BEBE//
         compare = strcmp(strType, "cidadeBebe");
+        printf("%d cidadeBebe \n", compare);
         if(!compare){
             int position =ftell(b);
             NextField= position +105;
+            kkk=ftell(b);
+            printf("%d\n", kkk);
 
              //saves the register
             bread_reg(b, &reg);
             kkk=ftell(b);
+            printf("%d\n", kkk);
 
             //moves pointer to right position//
             fseek(b, -128,SEEK_CUR);
-         
+
+            
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
@@ -480,7 +456,7 @@ int update_field(char *strType, char *strContent, FILE *b){
             }
 
             } else{
-                //goes to the field sizeCidadeBebe
+                //goes to the field sizeCidadeBeb
                 fseek(b, position+4, SEEK_SET);
 
                 //checks size of string and saves it
@@ -489,6 +465,7 @@ int update_field(char *strType, char *strContent, FILE *b){
 
                 //writes city 
                 fseek(b, reg.sizeCidadeMae, SEEK_CUR);
+                bbb =ftell(b);
                 fwrite(strContent, sizeof(char), CityLength, b);
             
 
@@ -503,6 +480,64 @@ int update_field(char *strType, char *strContent, FILE *b){
             }
         }
 
+/*
+fseek(b,bbb, SEEK_SET);
+char str[CityLength];
+printf("%d\n", bbb);
+fread(str, sizeof(char), CityLength, b);
+printf("%s amazenado", str);
+*/
 return 0;
 
+}
+
+/*void bwrite_reg(FILE *fp){
+         // stores position of pointer
+    int position= ftell(fp);
+        // reads CidadeMae/Bebe string sizes
+    fwrite(&reg->sizeCidadeMae, sizeof(int), 1 ,fp);
+    fwrite(&reg->sizeCidadeBebe, sizeof(int), 1 ,fp);
+
+        // read if string cidadeMae exists 
+    if(reg->sizeCidadeMae){
+        fread(reg->cidadeMae, sizeof(char), reg->sizeCidadeMae, fp); 
+        reg->cidadeMae[reg->sizeCidadeMae] = '\0';
+    }
+        // read if string cidadeBebe exists 
+    if(reg->sizeCidadeBebe){
+        fread(reg->cidadeBebe, sizeof(char), reg->sizeCidadeBebe, fp);
+        reg->cidadeBebe[reg->sizeCidadeBebe] = '\0';
+    }
+        // sets pointer to the begining of the rest of the variables
+    fseek(fp, 0,SEEK_SET);
+    position += VAR_SIZE_OFFSET;
+    fseek(fp, position,SEEK_SET);
+
+        // reading remaining registry components 
+    fread(&reg->idNascimento, sizeof(int), 1, fp);
+    fread(&reg->idadeMae, sizeof(int), 1, fp);
+    fread(reg->dataNascimento, sizeof(char), NASC_SIZE, fp);
+    fread(&reg->sexoBebe, sizeof(char), 1, fp);
+    fread(reg->estadoMae, sizeof(char), ESTADO_SIZE, fp);
+    fread(reg->estadoBebe, sizeof(char), ESTADO_SIZE, fp);
+
+    return 0;
+}
+void atualize_reg(){
+
+}
+*/
+
+int mfeof(FILE *fp) {
+        // feof that works
+    long cur = ftell(fp), max;
+
+    fseek(fp, 0, SEEK_END);
+    max = ftell(fp);
+
+    fseek(fp, cur, SEEK_SET);
+        // """"""compares SEEK_CUR with EOF""""""
+    if(cur < max)
+        return 0;
+    return 1;
 }
