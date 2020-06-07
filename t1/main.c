@@ -140,7 +140,9 @@ int rrn2screen(char *bin, int rrn){
     	    	// reading on position in binary file
     	bread_reg(b, &reg);
 		// checking for removed reg
-	if (reg.sizeCidadeMae >= 0) print_reg(&reg);
+	if (reg.sizeCidadeMae >= 0){
+	       	print_reg(&reg);
+	}else printf("Registro Inexistente.");
 
     	fclose(b);
     	return 0;
