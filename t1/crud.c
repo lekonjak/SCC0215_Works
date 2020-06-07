@@ -13,14 +13,14 @@ int bwrite_reg(FILE *fp, REG *reg){
     fwrite(&reg->sizeCidadeBebe, sizeof(int), 1 ,fp);
         
         // writting if string cidadeMae exists 
-    if(reg->sizeCidadeMae)
+    if(reg->sizeCidadeMae > 0)
 #ifdef DEBUG
     printf("writting '%s'\n", reg->cidadeMae);
 #endif
         fwrite(reg->cidadeMae, sizeof(char), reg->sizeCidadeMae, fp);
 
         // writting if string cidadeBebe exists 
-    if(reg->sizeCidadeBebe)
+    if(reg->sizeCidadeBebe > 0)
 #ifdef DEBUG
     printf("writting '%s'\n", reg->cidadeBebe);
 #endif
@@ -155,12 +155,12 @@ int bread_reg(FILE *fp, REG *reg ){
     fread(&reg->sizeCidadeBebe, sizeof(int), 1 ,fp);
 
         // read if string cidadeMae exists 
-    if(reg->sizeCidadeMae){
+    if(reg->sizeCidadeMae > 0){
         fread(reg->cidadeMae, sizeof(char), reg->sizeCidadeMae, fp); 
         reg->cidadeMae[reg->sizeCidadeMae] = '\0';
     }
         // read if string cidadeBebe exists 
-    if(reg->sizeCidadeBebe){
+    if(reg->sizeCidadeBebe > 0){
         fread(reg->cidadeBebe, sizeof(char), reg->sizeCidadeBebe, fp);
         reg->cidadeBebe[reg->sizeCidadeBebe] = '\0';
     }
