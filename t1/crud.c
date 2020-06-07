@@ -262,7 +262,7 @@ int quotes_clean(char *c){
 	} 
 		// setting string end
 	c[j] = '\0';
-
+	return 0;
 }
 
 int space_converter(char *c){
@@ -275,6 +275,7 @@ int space_converter(char *c){
         }
 		i++;
 	}
+	return 0;
 }
 
 int space_return(char *c){
@@ -283,6 +284,7 @@ int space_return(char *c){
 		c[i] = c[i] == '&' ? ' ' : c[i];
 		i++;
 	}
+	return 0;
 }
 
 
