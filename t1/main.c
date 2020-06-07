@@ -149,7 +149,7 @@ int rrn2screen(char *bin, int rrn){
 int search(char *bin, REG *reg, char mask[8]){
 	        // opening files pointers
 	FILE *b = fopen(bin, "rb");
-    	int removed = -1;
+    	int removed = -1, any = 0;
     	    // checking for null file pointers
     	if ( b == NULL ){
     	    	printf("Falha no processamento do arquivo.");
@@ -212,7 +212,10 @@ int search(char *bin, REG *reg, char mask[8]){
 	
 		// theoretically, if it gets here without jumping to loop next iteration, it matches search criteria
 		print_reg(&auxReg);	
+		any++;
 	}
+
+	if( any == 0 ) printf("Registro Inexistente.");
     
 
    	fclose(b);
