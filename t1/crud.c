@@ -235,17 +235,20 @@ int print_reg(REG *reg){
 }
 
 int mfeof(FILE *fp) {
-        // feof that works
-    long cur = ftell(fp), max;
+	
+	if( fp != NULL){
+        	// feof that works
+    		long cur = ftell(fp), max;
 
-    fseek(fp, 0, SEEK_END);
-    max = ftell(fp);
+    		fseek(fp, 0, SEEK_END);
+    		max = ftell(fp);
 
-    fseek(fp, cur, SEEK_SET);
-        // """"""compares SEEK_CUR with EOF""""""
-    if(cur < max)
-        return 0;
-    return 1;
+    		fseek(fp, cur, SEEK_SET);
+    		    // """"""compares SEEK_CUR with EOF""""""
+    		if(cur < max)
+    		    return 0;
+	}
+	return 1;
 }
 
 int quotes_clean(char *c){
