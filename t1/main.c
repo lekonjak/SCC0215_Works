@@ -231,7 +231,7 @@ int search2remove(char *bin, REG *reg, char mask[8]){
 	int removed = -1;
     
     	    // checking for null file pointers
-    	if ( b == NULL ){
+    	if ( mfeof(b) ){
     	    	printf("Falha no processamento do arquivo.");
     	    	return 0; 
     	}
