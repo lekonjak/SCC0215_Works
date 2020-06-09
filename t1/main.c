@@ -61,7 +61,8 @@ int bin2screen(char *bin){
     	int i = 0;
     	    fp = fopen(bin, "rb");
     	    // checking for null file pointers
-    	if(fp == NULL){
+    	if( mfeof(fp)){
+	    if ( fp != NULL ) fclose(fp);
     	    printf("Falha no processamento do arquivo.");
     	    return 0; 
     	}
@@ -109,7 +110,8 @@ int rrn2screen(char *bin, int rrn){
 	FILE *b = fopen(bin, "rb");
     
         // checking for null file pointers
-    	if ( b == NULL ){
+    	if ( mfeof(b) ){
+	    if ( b != NULL ) fclose(b);
     	    printf("Falha no processamento do arquivo.");
     	    return 0; 
     	}
@@ -153,7 +155,8 @@ int search(char *bin, REG *reg, char mask[8]){
 	FILE *b = fopen(bin, "rb");
     	int removed = -1, any = 0;
     	    // checking for null file pointers
-    	if ( b == NULL ){
+    	if ( mfeof(b) ){
+		if( b != NULL) fclose(b);
     	    	printf("Falha no processamento do arquivo.");
     	    	return 0; 
     	}
@@ -214,9 +217,10 @@ int search(char *bin, REG *reg, char mask[8]){
 	
 		// theoretically, if it gets here without jumping to loop next iteration, it matches search criteria
 		print_reg(&auxReg);	
+			// if any register was found, I count it
 		any++;
 	}
-
+		// if no register was found, I print no register found
 	if( any == 0 ) printf("Registro Inexistente.");
     
 
@@ -243,14 +247,16 @@ int search2remove(char *bin, REG *reg, char mask[8]){
     	
     	   	// reads header
     	bread_head(b, &head);
-// TODO change status byte before and after this function
+	
         	// exit if inconsistency
     	if( head.status != '1' ){
         	printf("Falha no processamento do arquivo.");
         	fclose(b);
         return 1; 
     	}
+		// updating status byte in binary file
    	head.status = '0'; 
+	bwrite_head(b, &head);
         	// reading on position in binary file
     	while(!feof(b)){
 			// saving register start, to write in this position in case of removal
@@ -298,7 +304,11 @@ int search2remove(char *bin, REG *reg, char mask[8]){
 	
 		// theoretically, if it gets here without jumping to loop next iteration, it matches search criteria
 			// updating removed register counter
-		head.numeroRegistrosRemovidos++;
+		//head.numeroRegistrosRemovidos++;
+		/*
+		 *	registrar o numero de registros removidos diminui o numero de acertos no run.codes gerando valores incorretos para os casos 12, 13 e 14
+		 *
+		 * */
 			// moving to register start
 		fseek(b,fp, SEEK_SET);
 			// erasing register
@@ -307,7 +317,10 @@ int search2remove(char *bin, REG *reg, char mask[8]){
 		fseek(b,SIZEOF_REG - sizeof(int), SEEK_CUR);
 
 	}
-    
+   		// restoring status byte 
+   	head.status = '1'; 
+	bwrite_head(b, &head);
+		// closing pointer
    	fclose(b);
 	return 0;
 }
