@@ -232,8 +232,9 @@ int search2remove(char *bin, REG *reg, char mask[8]){
     
     	    // checking for null file pointers
     	if ( mfeof(b) ){
+		if( b != NULL) fclose(b);
     	    	printf("Falha no processamento do arquivo.");
-    	    	return 0; 
+    	    	return 1; 
     	}
     	    
     	        // starting initial registers to zero
@@ -243,14 +244,13 @@ int search2remove(char *bin, REG *reg, char mask[8]){
     	   	// reads header
     	bread_head(b, &head);
 // TODO change status byte before and after this function
-
         	// exit if inconsistency
     	if( head.status != '1' ){
         	printf("Falha no processamento do arquivo.");
         	fclose(b);
         return 1; 
     	}
-    
+   	head.status = '0'; 
         	// reading on position in binary file
     	while(!feof(b)){
 			// saving register start, to write in this position in case of removal
@@ -684,11 +684,15 @@ int main(void){
 		    			// error case, invalid nomeDoCampo
 		    		}
             		}
-            		free(out);
             		// call a search function by provided partial register
             		// remove register
-			search2remove(in, &reg, mask);
+			if(search2remove(in, &reg, mask)){
+			       	free(out);
+    				free(args); 
+				return 0;
+			}
         	}
+		free(out);
         	binarioNaTela(in);
     }else if( op == 6 ){
       in = strtok(NULL, " \n");
