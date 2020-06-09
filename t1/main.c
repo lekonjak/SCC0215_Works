@@ -135,7 +135,7 @@ int rrn2screen(char *bin, int rrn){
     	}   
 	
     	    	// moving accordingly documentation suggests
-    	fseek(b, rrn*SIZEOF_REG, SEEK_SET);
+    	fseek(b, rrn*SIZEOF_REG + SIZEOF_REG, SEEK_SET);
     	    
     	    	// reading on position in binary file
     	bread_reg(b, &reg);
