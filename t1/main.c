@@ -340,46 +340,47 @@ int update_rrn(char *out, char *bin){
 
    // opening files pointers
     FILE *b = fopen(bin, "rb+");
-    
-        // checking for null file pointers
-    if ( b == NULL ){
-        printf("Falha no processamento do arquivo.");
-        return 0; 
-    }
+  
+     // checking for null file pointers
+        if ( mfeof(b) ){
+        if ( b != NULL ) fclose(b);
+            printf("Falha no processamento do arquivo.");
+            return 0; 
+        }
         
         // starting initial registers to zero
     HEAD head = {0};
     REG reg = {0};
-        // reads header
-    
+        // reads header   
     bread_head(b, &head);
-
         // exit if inconsistency
     if( head.status != '1' ){
         printf("Falha no processamento do arquivo.");
         fclose(b);
         return 1; 
     }
-
-    
         // checks if there are no regs
     if(head.numeroRegistrosInseridos == 0){
         printf("Registro Inexistente");
         return 1;
     }  
+//aqui    
     // goes to the right register
-        fseek(b, rrn*SIZEOF_REG, SEEK_SET);
+        fseek(b, (rrn+1)*SIZEOF_REG, SEEK_SET);
 
         //stores position
         tmp=ftell(b);
-
         
     //checks if it wasnt removed
         bread_reg(b, &reg);
         if(reg.sizeCidadeMae < 0 ){    
            pclose(b);
-           return 1;
+           return 0;
         }
+/*        
+printf("%d !!!! idadeMae\n", reg.idadeMae); 
+print_reg(&reg);
+*/
        //writes status byte as inconsistent//
         fseek(b,0,SEEK_SET);
         fwrite(&zero,sizeof(char), 1, b);
@@ -392,25 +393,30 @@ int update_rrn(char *out, char *bin){
     while(qtd--){
         str = strtok(NULL, " \n");
         strType = str;
-//printf("%s\n", strType);
         str = strtok(NULL, " \n");
+//printf("%s\n", strType);
+//printf("%s\n", strContent);        
         space_return(str);
         strContent = str;
 
-//printf("%s\n", strType);        
-        update_field(strType, strContent,b);  
+        update_field(strType, strContent,b, tmp);  
 
         //sets pointer to the beggining of the register again
-        fseek(b, tmp, SEEK_SET);            
-    }
-
-//writes status byte as consistent//
-        fseek(b,0,SEEK_SET);
-        fwrite(&one,sizeof(char), 1, b);
+        fseek(b, tmp, SEEK_SET); 
+  /*      
+bread_reg(b, &reg); 
+print_reg(&reg); 
+*/        
+        }
 //adds one to the updated regs
         fseek(b, 13, SEEK_SET);
         int totalreg = head.numeroRegistrosAtualizado + 1;
         fwrite((&totalreg),sizeof(int), 1, b);
+
+//writes status byte as consistent//
+        fseek(b,0,SEEK_SET);
+        fwrite(&one,sizeof(char), 1, b);
+
 
 fclose(b);
 return 0;
@@ -428,29 +434,30 @@ int add_reg(char *out,  char *bin){
         //reads input and adds it to the a reg
     space_return(str);
     if(strcmp(str, "NULO") == 0){
+//puts("lala");
         reg.sizeCidadeMae = 0; 
     }else{
         reg.sizeCidadeMae = strlen(str);
     }
-     if(strlen(str) > 0 )   strcpy(reg.cidadeMae, str);
+     if(reg.sizeCidadeMae > 0 )   strcpy(reg.cidadeMae, str);
 
 //cidadeBebe
-     str = strtok(NULL," ");
+     str = strtok(NULL," \n");
      space_return(str);
      if(strcmp(str, "NULO") == 0){
         reg.sizeCidadeBebe = 0; 
     }else{
         reg.sizeCidadeBebe = strlen(str);
     }
-     if(strlen(str) > 0 ) strcpy(reg.cidadeBebe, str);
+     if(reg.sizeCidadeBebe > 0 ) strcpy(reg.cidadeBebe, str);
 
 //idNascimento
-    str = strtok(NULL, " ");
+    str = strtok(NULL, " \n");
     reg.idNascimento = atoi(str);
  
 
 //idadeMae
-    str = strtok(NULL," ");
+    str = strtok(NULL," \n");
     if(strcmp(str, "NULO") == 0){
         reg.idadeMae = -1; 
     }else{
@@ -458,34 +465,43 @@ int add_reg(char *out,  char *bin){
     }
 //dataNascimento
 
-    str = strtok(NULL," ");
+    str = strtok(NULL," \n");
      if(strcmp(str, "NULO") == 0){
-        strcpy(reg.dataNascimento, "\0$$$$$$$$$");
+        strncpy(reg.dataNascimento, "$$$$$$$$$$", NASC_SIZE);
+        reg.dataNascimento[0] = '\0';
     }else{
-        strcpy(reg.dataNascimento, str);
+    /*
+printf("%s\n", reg.dataNascimento);
+printf("%c reg dt dataNascimento", reg.dataNascimento[9]);
+ */       strcpy(reg.dataNascimento, str);
     }
 //sexoBebe
-       str = strtok(NULL," ");
+       str = strtok(NULL," \n");
      if(strcmp(str, "NULO") == 0){
-        reg.sexoBebe = '\0';
+        reg.sexoBebe = '0';
     }else{
         reg.sexoBebe = str[0];
     }
  //estadoMae
-      str = strtok(NULL," ");
+      str = strtok(NULL," \n");
      if(strcmp(str, "NULO") == 0){
-        strcpy(reg.estadoMae, "\0$");
+        strcpy(reg.estadoMae, "$$");
+        reg.estadoMae[0] = '\0';
     }else{
         strcpy(reg.estadoMae, str);
     }
 //estadoBebe
-      str = strtok(NULL," ");
+      str = strtok(NULL," \n");
      if(strcmp(str, "NULO") == 0){
-        strcpy(reg.estadoBebe, "\0$");
+        strcpy(reg.estadoBebe, "$$");
+        reg.estadoBebe[0] = '\0';
     }else{
         strcpy(reg.estadoBebe, str);
     }
-
+/*
+print_reg(&reg);
+puts("leu reg");
+*/
     // opening files pointers
     FILE *b = fopen(bin, "rb+");
         // checking for null file pointers
@@ -508,11 +524,12 @@ int add_reg(char *out,  char *bin){
 
 
 // goes to the right register
-    fseek(b, head.RRNproxRegistro*SIZEOF_REG, SEEK_SET);
+    fseek(b, (head.RRNproxRegistro+1)*SIZEOF_REG, SEEK_SET);
     // writting CidadeMae/Bebe string sizes
     fwrite(&reg.sizeCidadeMae, sizeof(int), 1 ,b);
     fwrite(&reg.sizeCidadeBebe, sizeof(int), 1 ,b);
 
+int bbb =ftell(b);
     // writting if string cidadeMae exists 
     if(reg.sizeCidadeMae){
         fwrite(reg.cidadeMae, sizeof(char), reg.sizeCidadeMae, b);
@@ -526,22 +543,28 @@ int add_reg(char *out,  char *bin){
     i = 0;
     while(i++< MAX_SIZE - (reg.sizeCidadeMae + reg.sizeCidadeBebe))
         fwrite(&dol, sizeof(char), 1, b); 
+
         // writting remaining registry components 
     fwrite(&reg.idNascimento, sizeof(int), 1, b);
-
     fwrite(&reg.idadeMae, sizeof(int), 1, b);
-//int bbb =ftell(b);
+
     fwrite(reg.dataNascimento, sizeof(char), NASC_SIZE, b);
     fwrite(&reg.sexoBebe, sizeof(char), 1, b);
     fwrite(reg.estadoMae, sizeof(char), ESTADO_SIZE, b);
     fwrite(reg.estadoBebe, sizeof(char), ESTADO_SIZE, b);
 /*
-char stri[16] ;
-fseek(b,bbb, SEEK_SET);
-printf("%d\n", bbb);
-fread(stri, sizeof(char), 15, b);
-printf("%s amazenado", stri);
+fseek(b, head.RRNproxRegistro*SIZEOF_REG, SEEK_SET);
+bread_reg(b, &reg);
+print_reg(&reg);
+//char stri[16] ;
+//fseek(b,bbb, SEEK_SET);
+//printf("%d\n",head.RRNproxRegistro*SIZEOF_REG );
+//fseek(b, head.RRNproxRegistro*SIZEOF_REG, SEEK_SET);
+//printf("%d\n", bbb);
+//fread(&stri, sizeof(char), 15, b);
+//printf("%s amazenado", stri);
 */
+
 
 //updates the RRNproxRegistro field
 fseek(b, 1, SEEK_SET);

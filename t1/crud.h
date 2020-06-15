@@ -44,6 +44,7 @@ int space_converter(char *c);
 	// to convert back a sentence converted by space_converter
 int space_return(char *c);
 
-int update_field(char *strType, char *strContent, FILE *b);
+int update_field(char *strType, char *strContent, FILE *b, int tmp);
+
 int update_rrn(char *out, char *bin);
 #endif

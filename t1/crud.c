@@ -291,7 +291,8 @@ int space_return(char *c){
 }
 
 
-int update_field(char *strType, char *strContent, FILE *b){
+
+int update_field(char *strType, char *strContent, FILE *b, int tmp){
         REG reg = {0};   
         char dol = '$', one = '1', two = '2', empty= '\0'; 
         char null[2];
@@ -299,13 +300,20 @@ int update_field(char *strType, char *strContent, FILE *b){
         int NextField = ftell(b) + 105;
         int aux=-1, bo, number=0, zero=0;
         int compare=0;
-        char str[10];
-        strcpy(str, "\0$$$$$$$$$"); 
         int kkk= ftell(b);
         int CityLength;
         int bbb;
         //checks which one is the field to be updated
        
+        //saves the register
+            bread_reg(b, &reg);
+
+        //sets pointer to the beggining of the register again
+        fseek(b, tmp, SEEK_SET);
+
+
+//checks which one is the field to be updated
+
 ///idNAscimento
          compare = strcmp(strType, "idNascimento");
         if(!compare){
@@ -323,14 +331,16 @@ int update_field(char *strType, char *strContent, FILE *b){
         if(!compare){
             //moves pointer to right position//
             fseek(b, 109,SEEK_CUR);
-            //casts content to integer
-            number=atoi(strContent);
 
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(&aux,sizeof(int),1,b);
-            } else fwrite(&number,sizeof(int),1,b);
+                if(reg.idadeMae > 0) fwrite(&aux,sizeof(int),1,b);
+            } else {
+                //casts content to integer
+                number=atoi(strContent);
+                fwrite(&number,sizeof(int),1,b);
+            }
         }
                   
 
@@ -342,8 +352,17 @@ int update_field(char *strType, char *strContent, FILE *b){
             //checks if value is NULL
             compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(&str,sizeof(char),10,b);
-            }else fwrite(&strContent,sizeof(char),10,b);
+                //checks if its already written as null
+                if(reg.dataNascimento[0] != empty) fwrite(&empty,sizeof(char),1,b);
+            }else {
+                /*int lala =  ftell(b);
+                char opaopa[10];
+*/
+                fwrite(strContent,sizeof(char),10,b);
+               /* fseek(b, lala, SEEK_SET);
+                fread(&opaopa,sizeof(char),10,b);
+                printf("%s\n", opaopa);*/
+            }
         }
 
 //        //SEXO BEBE//
@@ -356,17 +375,17 @@ int update_field(char *strType, char *strContent, FILE *b){
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(&empty,sizeof(char),1,b);
-            }
-
-            //checks the gender and writes in the proper place
-            compare=strcmp(strContent, "1");
-            if(!compare){
-                fwrite(&one,sizeof(char),1,b);
-            }
-            compare=strcmp(strContent, "2");
-            if(!compare){
-                fwrite(&two,sizeof(char),1,b);
+                if(reg.sexoBebe != empty) fwrite(&empty,sizeof(char),1,b);
+            }else{
+                //checks the gender and writes in the proper place
+                compare=strcmp(strContent, "1");
+                if(!compare){
+                    fwrite(&one,sizeof(char),1,b);
+                }
+                compare=strcmp(strContent, "2");
+                if(!compare){
+                    fwrite(&two,sizeof(char),1,b);
+                }
             }
         }
 
@@ -381,8 +400,11 @@ int update_field(char *strType, char *strContent, FILE *b){
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(&null,sizeof(char),2,b);
-            } else fwrite(strContent, sizeof(char), 2, b);
+                //checks if its already marked as null
+                if(reg.estadoMae[0] != empty) fwrite(&empty,sizeof(char),1,b);
+            } else {
+                fwrite(strContent, sizeof(char), 2, b);
+            }
         }
         
   //       //ESTADO BEBE
@@ -395,7 +417,8 @@ int update_field(char *strType, char *strContent, FILE *b){
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(&null,sizeof(char),2,b);
+                //checks if its already marked as null
+                if(reg.estadoBebe[0] != empty) fwrite(&empty,sizeof(char),1,b);
             } else fwrite(strContent, sizeof(char), 2, b);
         }
 
@@ -404,90 +427,56 @@ int update_field(char *strType, char *strContent, FILE *b){
          compare = strcmp(strType, "cidadeMae");
         if(!compare){
             int position =ftell(b);
-            NextField= position +105;
-
-             //saves the register
-            bread_reg(b, &reg);
+  //          NextField= position +105;
 
             //moves pointer to right position//
-            fseek(b, -120,SEEK_CUR);
+            fseek(b, 8,SEEK_CUR);
 
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-                fwrite(reg.cidadeBebe,sizeof(char),reg.sizeCidadeBebe,b);
-
-                //checks if the rest is checked with $
-                char i= fread(&i, sizeof(char),1, b);
-                while(i != dol && ftell(b) < NextField){
-                fseek(b, -1,SEEK_CUR);
-                fwrite(&dol, sizeof(char), 1, b);
-                i= fread(&i, sizeof(char),1, b);
-
-
+                if(reg.sizeCidadeBebe > 0) fwrite(reg.cidadeBebe,sizeof(char),reg.sizeCidadeBebe,b);
+            
                 //muda o valor campo sizecidadeMae 
-            fseek(b, position, SEEK_SET);
+            fseek(b, tmp, SEEK_SET);
             fwrite(&zero,sizeof(int), 1, b);
-            }
-
             } else{
-                fseek(b, position, SEEK_SET);
+                //goes to the first field of the reg
+                fseek(b, tmp, SEEK_SET);
                 //checks size of string and saves it
                 CityLength = strlen(strContent);
+//printf("%d\n", CityLength );
                 fwrite(&CityLength,sizeof(int), 1, b);
 
                 //writes both cities 
-                fseek(b, 4, SEEK_CUR);
+                fseek(b, 8, SEEK_CUR);
                 fwrite(strContent, sizeof(char), CityLength, b);
                 fwrite(reg.cidadeBebe,sizeof(char),reg.sizeCidadeBebe,b);
-
+/*
                 //checks if the rest is checked with $
                 char i= fread(&i, sizeof(char),1, b);
                 while(i != dol && ftell(b) < NextField){
                 fseek(b, -1,SEEK_CUR);
                 fwrite(&dol, sizeof(char), 1, b);
                 i= fread(&i, sizeof(char),1, b);
-
+*/
                 } 
-            }
-        }         
+            }         
             
 //        //CIDADE DO BEBE//
         compare = strcmp(strType, "cidadeBebe");
         if(!compare){
-            int position =ftell(b);
-            NextField= position +105;
+//NextField= position +105;
+//kkk=ftell(b);
 
-             //saves the register
-            bread_reg(b, &reg);
-            kkk=ftell(b);
+            //goes to the place where the child's bith place size was stored
+                fseek(b, 4, SEEK_CUR); 
 
-            //moves pointer to right position//
-            fseek(b, -128,SEEK_CUR);
-         
              //checks if the value altered is NULL//
            compare = strcmp(strContent, "NULO");
             if(!compare){
-
-                //goes to the place where the child's bith place was stored
-                fseek(b, reg.sizeCidadeBebe, SEEK_CUR); 
-
-                //checks if the rest is checked with $
-                char i= fread(&i, sizeof(char),1, b);
-                while(i != dol && ftell(b) < NextField){
-                fseek(b, -1,SEEK_CUR);
-                fwrite(&dol, sizeof(char), 1, b);
-                i= fread(&i, sizeof(char),1, b);
-
-                //changes size of birth place to NULL
-                fseek(b, position+4, SEEK_SET);
                 fwrite(&zero,sizeof(int),1,b);
-            }
-
             } else{
-                //goes to the field sizeCidadeBebe
-                fseek(b, position+4, SEEK_SET);
-
                 //checks size of string and saves it
                 CityLength = strlen(strContent);
                 fwrite(&CityLength,sizeof(int), 1, b);
@@ -495,18 +484,8 @@ int update_field(char *strType, char *strContent, FILE *b){
                 //writes city 
                 fseek(b, reg.sizeCidadeMae, SEEK_CUR);
                 fwrite(strContent, sizeof(char), CityLength, b);
-            
-
-                //checks if the rest is checked with $
-                char i= fread(&i, sizeof(char),1, b);
-                while(i != dol && ftell(b) < NextField){
-                fseek(b, -1,SEEK_CUR);
-                fwrite(&dol, sizeof(char), 1, b);
-                i= fread(&i, sizeof(char),1, b);
-
                 } 
             }
-        }
 
 return 0;
 
