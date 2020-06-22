@@ -251,6 +251,7 @@ int mfeof(FILE *fp) {
 	return 1;
 }
 
+
 int quotes_clean(char *c){
 	int i = 0, j = 0;
 		// goes through entire string
@@ -490,3 +491,4 @@ int update_field(char *strType, char *strContent, FILE *b, int tmp){
 return 0;
 
 }
+

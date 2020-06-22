@@ -24,7 +24,7 @@ typedef struct head{
 	int RRNproxRegistro, numeroRegistrosInseridos, numeroRegistrosRemovidos, numeroRegistrosAtualizado;
 }HEAD;
 
-    	// writting registry/header to binary
+    // writting registry/header to binary
 int bwrite_reg(FILE *fp, REG *reg);
 int bwrite_head(FILE *fp, HEAD *head);
 	// reading register from FILE
@@ -35,14 +35,8 @@ int bread_reg(FILE *fp, REG *reg);
 int bread_head(FILE *fp, HEAD *head);
 	// miscellanea
 int print_reg(REG *reg);
-   	// our feof implementation
+    // our feof implementation
 int mfeof(FILE *fp);
-	// remove quotes from strings
-int quotes_clean(char *c);
-	// to handle with quoted sentences with spaces using strtok
-int space_converter(char *c);
-	// to convert back a sentence converted by space_converter
-int space_return(char *c);
 
 int update_field(char *strType, char *strContent, FILE *b, int tmp);
 
