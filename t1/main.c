@@ -236,7 +236,7 @@ int search2remove(char *bin, REG *reg, char mask[8]){
     
     	    // checking for null file pointers
     	if ( mfeof(b) ){
-		if( b != NULL) fclose(b);
+		if( b != NULL ) fclose(b);
     	    	printf("Falha no processamento do arquivo.");
     	    	return 1; 
     	}
@@ -585,7 +585,52 @@ return 0;
 
 }
 
+int bin2btree(char *bin, char *btree){
+        	// opening files pointers
+	FILE *input = fopen(bin,"r"), *output = fopen(btree, "w+b");
+    
+    	    // checking for null file pointers
+    	if ( mfeof(input) ){
+		if( input != NULL ) fclose(input);
+    	    	printf("Falha no processamento do arquivo.");
+    	    	return 1; 
+    	}
 
+    	        // starting initial registers to zero
+    	BTREE_HEAD bhead = {0};
+	HEAD head = {0};
+    	REG reg = {0};
+    	
+		// check for input binary file consistency
+	bread_head(input, &head);
+	if ( head.status == '0' ){
+    	    	printf("Falha no processamento do arquivo.");
+    	    	return 1; 
+	}
+    	    	// writting btree header into binary btree file
+    	bhead.status = '0';
+	bhead.noRaiz = -1;
+    	btwrite_head(output, &bhead);
+    	    
+    	    	// writting new registers until EOF
+    	while(!mfeof(input)){
+    	        // read input line
+    	    bread_reg(input,&reg);
+#ifdef DEBUG
+    	    print_reg(&reg);
+#endif
+    	        // using insert function
+    	    btinsert_reg(output, &bhead, &reg);
+    	}
+    	    // updating status byte
+    	bhead.status = '1'; 
+    	    // writting header again, with recent values 
+    	btwrite_head(output, &bhead);
+    	    // closing file pointers
+	fclose(input);
+	fclose(output);
+	return 0;
+}
 int main(void){
         	// setting getline variables to read input
 	size_t size = GETLINE_RECOMMENDED_SIZE;
@@ -770,7 +815,13 @@ int main(void){
         }
         free(out);
         binarioNaTela(in);
-    }
+    }else if( op == 8 ){
+        // reads csv file and output to binary file
+        	in = strtok(NULL, " \n");
+        	out = strtok(NULL, " \n");
+		bin2btree(in, out);
+        	binarioNaTela(out);
+	}
         // getline memory free
     free(args); 
 
