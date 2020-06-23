@@ -38,7 +38,4 @@ int print_reg(REG *reg);
     // our feof implementation
 int mfeof(FILE *fp);
 
-int update_field(char *strType, char *strContent, FILE *b, int tmp);
-
-int update_rrn(char *out, char *bin);
 #endif

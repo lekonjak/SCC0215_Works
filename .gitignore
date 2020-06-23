@@ -1,6 +1,6 @@
 # ignore .o files
 t1/*.o
-t1/programaTrab
+# ignore 
+t1/t1
 t1/*.bin
-t1/*.zip
 
