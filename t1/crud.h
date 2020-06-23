@@ -24,6 +24,11 @@ typedef struct head{
 	int RRNproxRegistro, numeroRegistrosInseridos, numeroRegistrosRemovidos, numeroRegistrosAtualizado;
 }HEAD;
 
+typedef struct btree_head{
+	char status;
+	int noRaiz, nroNiveis, proxRRN, nroChaves;
+}BTREE_HEAD;
+
     	// writting registry/header to binary
 int bwrite_reg(FILE *fp, REG *reg);
 int bwrite_head(FILE *fp, HEAD *head);
