@@ -29,6 +29,10 @@ typedef struct btree_head{
 	int noRaiz, nroNiveis, proxRRN, nroChaves;
 }BTREE_HEAD;
 
+typedef struct btree_reg{
+	int nivel, n, C1, Pr1, C2, Pr2, C3, Pr3, C4, Pr4, C5, Pr5, P1, P2, P3, P4, P5, P6;
+}BTREE_REG;
+
     	// writting registry/header to binary
 int bwrite_reg(FILE *fp, REG *reg);
 int bwrite_head(FILE *fp, HEAD *head);
