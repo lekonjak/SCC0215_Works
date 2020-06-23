@@ -58,4 +58,6 @@ int update_field(char *strType, char *strContent, FILE *b, int tmp);
 int update_rrn(char *out, char *bin);
 	// writting btree registry/header to binary
 int btwrite_head(FILE *fp, BTREE_HEAD *head);
+	// insert a reg in btree
+int btinsert_reg(FILE *fp, BTREE_HEAD *head, REG *reg);
 #endif
