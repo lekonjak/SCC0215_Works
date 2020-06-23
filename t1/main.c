@@ -821,7 +821,16 @@ int main(void){
         	out = strtok(NULL, " \n");
 		bin2btree(in, out);
         	binarioNaTela(out);
-	}
+    }else if( op == 9 ){
+	    		// getting two binary file names
+        	in = strtok(NULL, " \n");
+        	out = strtok(NULL, " \n");
+			// getting idNascimento string
+		aux1 = strtok(NULL, " \n");
+			// its value
+	    	op = atoi(strtok(args," \n"));
+
+    }
         // getline memory free
     free(args); 
 
