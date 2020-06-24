@@ -12,6 +12,7 @@
 #define GETLINE_RECOMMENDED_SIZE 120
 #define SIZEOF_REG 128
 #define HEAD_EMPTY_BYTES 111
+#define BTHEAD_EMPTY_BYTES 55
 
 typedef struct reg{
     char sexoBebe;
