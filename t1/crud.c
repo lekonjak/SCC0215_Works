@@ -490,3 +490,28 @@ int update_field(char *strType, char *strContent, FILE *b, int tmp){
 return 0;
 
 }
+
+int btwrite_head(FILE *fp, BTREE_HEAD *head){
+    long ft = ftell(fp);
+    char dol = '$';
+    int i = 0;
+        // going to file first position
+    fseek(fp, 0, SEEK_SET);
+        // writting status byte
+    fwrite(&head->status, sizeof(char), 1, fp);
+        // writting other variables
+    fwrite(&head->noRaiz, sizeof(int), 1, fp);
+    fwrite(&head->nroNiveis, sizeof(int), 1, fp);
+    fwrite(&head->proxRRN, sizeof(int), 1, fp);
+    fwrite(&head->nroChaves, sizeof(int), 1, fp);
+
+        // fill remaining reserved space with $
+    while(i++<BTHEAD_EMPTY_BYTES)
+        fwrite(&dol, sizeof(char), 1, fp);
+
+        // returning fp to where it was
+    fseek(fp, ft, SEEK_SET);
+    return 0;
+}
+
+int btinsert_ret(FILE *fp, BTREE_HEAD *head, REG *reg){}
